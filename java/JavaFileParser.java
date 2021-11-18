@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -27,20 +28,26 @@ public class JavaFileParser {
 	}
 
 	public static void main(String[] args) {
+
+		if (args.length == 0) {
+			System.out.println("Usage: JavaFileParser [Java source files]");
+			return;
+		}
+
 		JavaFileParser jfp = new JavaFileParser();
 		for (int i = 0; i < args.length; i++)
 			jfp.parseJavaSourceFile(args[i]);
 	}
 
-	public List parseJavaSourceFile(String filePath)
+	public void parseJavaSourceFile(String sourcePath)
 	{
-		List retMethodList = new ArrayList();
+		File sourceFile = new File(sourcePath);
 
 		/* Create a Java Source Visitor object. */
-		JavaSourceVisitor jsv = new JavaSourceVisitor();
+		JavaSourceVisitor jsv = new JavaSourceVisitor(sourceFile);
 
 		/* Get files object list from the java file path.*/
-		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(filePath);
+		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
 
 		/* Get the java compiler task object. */
 		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
@@ -54,14 +61,9 @@ public class JavaFileParser {
 			   codeTree.accept(jsv, null); 
 		   }
 		   
-		   /* Get the parsed out method list. */
-		   retMethodList = jsv.getMethodList();
-
-		} catch (IOException e) {
-		   e.printStackTrace();
+		} catch (IOException ioerror) {
+		   ioerror.printStackTrace();
 		}
-
-		return retMethodList;
 	}
 
 	//public void parseJavaSourceString(String javaSourceCode) {}
