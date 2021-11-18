@@ -1,25 +1,42 @@
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreeScanner;
 
 
-public class JavaSourceVisitor extends TreeScanner<JavaMethodDTO, Object> {
+public class JavaSourceVisitor extends TreeScanner<Object, Object> {
 
-	private List<JavaMethodDTO> methodList = new ArrayList<JavaMethodDTO>();
+	private File sourceFile = null;
+	private HashMap<String, String> environment = new HashMap<String, String>();
 
-	public List getMethodList() {
-		if (methodList == null) {
-			 methodList = new ArrayList<JavaMethodDTO>();
-		}
-		return methodList;
+	public JavaSourceVisitor(File sourceFile) {
+		this.sourceFile = sourceFile;
 	}
 
-	public void setMethodList(List<JavaMethodDTO> methodList) {
-		this.methodList = methodList;
+	public String getClassName() {
+		return sourceFile.getName().replace(".java", "");
+	}
+
+	public String getVariableName(VariableTree variableTree) {
+
+		if (variableTree.getType().getKind() == Tree.Kind.PRIMITIVE_TYPE)
+			return variableTree.getName().toString();
+
+		String name = variableTree.getName().toString();
+		if (!name.startsWith("var"))
+			return name;
+
+		String type = variableTree.getType().toString();
+		if (type.startsWith("Iso"))
+			type = type.substring(3);
+
+		return type.substring(0, 1).toLowerCase() + type.substring(1);
 	}
 
 	private String objectToString(Object object) {
@@ -27,55 +44,57 @@ public class JavaSourceVisitor extends TreeScanner<JavaMethodDTO, Object> {
 	}
 
 	@Override
-	public JavaMethodDTO visitMethod(MethodTree mt, Object obj) {
+	public Object visitMethod(MethodTree methodTree, Object object) {
 
-		if (mt != null) {
-			JavaMethodDTO javaMethodDto = new JavaMethodDTO();
-			String methodName = objectToString(mt.getName());
-			String methodBody = objectToString(mt.getBody());
-			if (methodBody != null && methodBody.indexOf(".triggerEvent") > -1) {
+		String modifier   = objectToString(methodTree.getModifiers());
+		String returnType = objectToString(methodTree.getReturnType());
+		String methodName = objectToString(methodTree.getName());
+		String methodBody = objectToString(methodTree.getBody());
 
-				System.out.print(methodName + ";");
-				List<String> paramStrList = new ArrayList<String>();
-				List<? extends VariableTree> paramList = mt.getParameters();
-				if (paramList != null) {
-					for (VariableTree vt : paramList) {
-						String paramStr = objectToString(vt);
-						paramStrList.add(paramStr);
-						System.out.print(paramStr + ";");
-					}
-				}
+		List<String> paramStrList = new ArrayList<String>();
+		List<? extends VariableTree> paramList = methodTree.getParameters();
+		if (paramList != null) {
+			for (VariableTree variableTree : paramList) {
 
-				System.out.println();
+				String type = variableTree.getType().toString();
+				String oldName = variableTree.getName().toString();
+				String newName = getVariableName(variableTree);
 
-				String[] lines = methodBody.split("\\n");
-				for (int i = 0; i < lines.length; i++) {
-					String line = lines[i];
-					if (line.indexOf(".triggerEvent") > -1)
-						System.out.println(line.strip());
-				}
-				System.out.println(methodBody);
+				environment.put(oldName, newName);
 
-				//javaMethodDto.setMethodModifier(modifier);
-				//javaMethodDto.setMethodReturnType(returnType);
-				javaMethodDto.setMethodName(methodName);
-				javaMethodDto.setMethodParamList(paramStrList);
-				//javaMethodDto.setMethodThrowsList(throwsStrList);
-				javaMethodDto.setMethodBody(methodBody);
-
-				this.methodList.add(javaMethodDto);
+				paramStrList.add(type + " " + newName);
 			}
 		}
 
-		if (obj != null)
-			System.out.println(obj.toString());
+		List throwsStrList = new ArrayList();
+		List<? extends ExpressionTree> throwsList = methodTree.getThrows();
+		if (throwsList != null) {
+			for (ExpressionTree et : throwsList) 					{
+				String throwsStr = objectToString(et);
+				throwsStrList.add(throwsStr);
+			}
+		}
 
-		return super.visitMethod(mt, obj);
+		if (methodName.equals("<init>"))
+			System.out.print(modifier + getClassName() + "(");
+		else
+			System.out.print(modifier + returnType + " " + methodName + "(");
+
+		if (paramStrList.size() > 0) {
+			for (int i = 0; i < paramStrList.size() - 1; i++) {
+				System.out.print(paramStrList.get(i) + ", ");
+			}
+
+			System.out.print(paramStrList.get(paramStrList.size() - 1));
+		}
+
+		System.out.println(")");
+
+		return super.visitMethod(methodTree, object);
 	}
 
 	@Override
-	public JavaMethodDTO visitVariable(VariableTree vt, Object obj) {
-		return super.visitVariable(vt, obj);
+	public Object visitVariable(VariableTree variableTree, Object object) {
+		return super.visitVariable(variableTree, object);
 	}
-
 }
