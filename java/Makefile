@@ -1,3 +1,3 @@
 
 all:
-	javac -cp .:tools.jar JavaMethodDTO.java JavaSourceVisitor.java JavaFileParser.java
+	javac -cp .:tools.jar JavaSourceVisitor.java JavaFileParser.java
