@@ -14,50 +14,50 @@ import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.util.Context;
 
 
-public class JavaFileParser {
+public class SourceFileParser {
 
 	private JavacFileManager jcFileManager;
 
 	private JavacTool jcTool;
 
 	@SuppressWarnings("deprecation")
-	public JavaFileParser() {
+	public SourceFileParser() {
 		Context context = new Context();
 		jcFileManager = new JavacFileManager(context, true, Charset.defaultCharset());
 		jcTool = new JavacTool();
 	}
 
+	public String getClassName(String sourcePath) {
+		File sourceFile = new File(sourcePath);
+		return sourceFile.getName().replace(".java", "");
+	}
+
 	public static void main(String[] args) {
 
 		if (args.length == 0) {
-			System.out.println("Usage: JavaFileParser [Java source files]");
+			System.out.println("Usage: SourceFileParser [Java source files]");
 			return;
 		}
 
-		JavaFileParser jfp = new JavaFileParser();
+		SourceFileParser sfp = new SourceFileParser();
 		for (int i = 0; i < args.length; i++)
-			jfp.parseJavaSourceFile(args[i]);
+			sfp.parseJavaSourceFile(args[i]);
 	}
 
 	public void parseJavaSourceFile(String sourcePath)
 	{
-		File sourceFile = new File(sourcePath);
 
-		/* Create a Java Source Visitor object. */
-		JavaSourceVisitor jsv = new JavaSourceVisitor(sourceFile);
+		JavaSourceVisitor jsv = new JavaSourceVisitor(getClassName(sourcePath));
 
-		/* Get files object list from the java file path.*/
 		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
 
-		/* Get the java compiler task object. */
 		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
 		JavacTask jcTask = (JavacTask) cTask;
 		  
 		try {
-		   /* Iterate the java compiler parse out task. */
+
 		   Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
 		   for (CompilationUnitTree codeTree : codeResult) {
-			   /* Parse out one java file source code.*/
 			   codeTree.accept(jsv, null); 
 		   }
 		   
@@ -65,6 +65,4 @@ public class JavaFileParser {
 		   ioerror.printStackTrace();
 		}
 	}
-
-	//public void parseJavaSourceString(String javaSourceCode) {}
 }
