@@ -1,8 +1,9 @@
 
 all:
-	javac -cp .:tools.jar JavaSourceVisitor.java SourceFileParser.java
+	javac -cp .:tools.jar JavaSourceVisitor.java FileParser.java
 
 clean:
 	rm -f *.class
+
 run:
-	java -cp .:tools.jar SourceFileParser.java IsoPlayer.java
+	java -cp .:tools.jar FileParser.java IsoPlayer.java
