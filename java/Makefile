@@ -1,6 +1,6 @@
 
 all:
-	javac -cp .:tools.jar JavaSourceVisitor.java FileParser.java
+	javac -cp .:tools.jar -Xlint:unchecked JavaSourceVisitor.java FileParser.java
 
 clean:
 	rm -f *.class
