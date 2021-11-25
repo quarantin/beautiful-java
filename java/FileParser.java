@@ -39,25 +39,29 @@ public class FileParser {
 			sfp.parseJavaSourceFile(args[i]);
 	}
 
-	public void parseJavaSourceFile(String sourcePath)
-	{
-
-		JavaSourceVisitor jsv = new JavaSourceVisitor();
+	public void parseJavaSourceFile(String sourcePath) {
 
 		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
 
 		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
-		JavacTask jcTask = (JavacTask) cTask;
+		JavacTask jcTask = (JavacTask)cTask;
 		  
 		try {
 
-		   Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
-		   for (CompilationUnitTree codeTree : codeResult) {
-			   codeTree.accept(jsv, null); 
-		   }
-		   
-		} catch (IOException ioerror) {
-		   ioerror.printStackTrace();
+			Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
+
+			VariableVisitor vv = new VariableVisitor();
+			for (CompilationUnitTree codeTree : codeResult) {
+				codeTree.accept(vv, null);
+			}
+
+			JavaSourceVisitor jsv = new JavaSourceVisitor(vv);
+			for (CompilationUnitTree codeTree : codeResult) {
+				codeTree.accept(jsv, null);
+			}
+		}
+		catch (IOException ioerror) {
+			ioerror.printStackTrace();
 		}
 	}
 }

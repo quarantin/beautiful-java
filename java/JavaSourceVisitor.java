@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.sun.source.tree.Tree;
@@ -13,18 +12,21 @@ import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
 
-public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
+public class JavaSourceVisitor extends BaseJavaSourceVisitor {
+
+	public JavaSourceVisitor(VariableVisitor vv) {
+		super(vv);
+	}
 
 	@Override
 	public String visitPackage(PackageTree packageTree, String indent) {
+
 		String packageName = packageTree.getPackageName().toString();
 
-		for (AnnotationTree annotationTree : packageTree.getAnnotations()) {
+		for (AnnotationTree annotationTree : packageTree.getAnnotations())
 			println(annotationTree.toString());
-		}
 
 		println("package " + packageName + ";\n");
-
 		return super.visitPackage(packageTree, indent);
 	}
 
@@ -39,7 +41,7 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 
 		String simpleName = obj2str(classTree.getSimpleName());
 		if (simpleName.equals(""))
-			return super.visitClass(classTree, indent + "\t");
+			return super.visitClass(classTree, indent);
 
 		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		classStack.push(simpleName);
@@ -88,13 +90,14 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 			}
 		}
 
-		super.visitClass(classTree, indent + "\t");
+		String result = super.visitClass(classTree, indent);
 
 		print(indent + "}\n");
 
 		//System.err.println("DEBUG: POP class = " + simpleName);
 		classStack.pop();
-		return null;
+
+		return result;
 	}
 
 	public String methodVisitor(MethodTree methodTree, String indent) {
@@ -103,33 +106,34 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		String returnType = obj2str(methodTree.getReturnType());
 		String methodName = obj2str(methodTree.getName());
 
-		//System.err.println("DEBUG: PUSH method = " + methodName);
-		methodStack.push(methodName);
-		String frameKey = getEnvKey();
-		callframes.put(frameKey, new HashMap<String, String>());
+		if (methodName.equals("<init>"))
+			methodName = classStack.peek();
 
+		List<String> typeList = new ArrayList<>();
+		List<String> paramList = new ArrayList<>();
+
+		for (VariableTree variableTree : methodTree.getParameters()) {
+			String type = variableTree.getType().toString();
+			String oldName = variableTree.getName().toString();
+			typeList.add(type);
+			paramList.add(type + " " + oldName);
+		}
+
+		String methodKey = methodName + "(" + String.join(",", typeList) + ")";
+		//System.err.println("DEBUG: PUSH method = " + methodName);
+		methodStack.push(methodKey);
 
 		String output = "\n";
 		if (methodName.equals("<init>")) {
-			methodName = classStack.peek();
 			output += indent + modifier + methodName + "(";
 		}
 		else {
 			output += indent + modifier + returnType + " " + methodName + "(";
 		}
 
-
-		List<String> paramList = new ArrayList<String>();
-		for (VariableTree variableTree : methodTree.getParameters()) {
-
-			String type = variableTree.getType().toString();
-			String oldName = variableTree.getName().toString();
-			paramList.add(type + " " + oldName);
-		}
-
 		output += String.join(", ", paramList) + ")";
 
-		List<String> throwsList = new ArrayList<String>();
+		List<String> throwsList = new ArrayList<>();
 		for (ExpressionTree expressionTree : methodTree.getThrows()) {
 			String throwsStr = obj2str(expressionTree);
 			throwsList.add(throwsStr);
@@ -150,22 +154,14 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		//System.err.println("DEBUG: POP method = " + methodName);
 		output = replace(output);
 		methodStack.pop();
-		callframes.remove(frameKey);
+		//callframes.remove(getFrameKey());
 		return output;
-	}
-
-	@Override
-	public String visitVariable(VariableTree variableTree, String indent) {
-		String oldName = obj2str(variableTree.getName());
-		String type = obj2str(variableTree.getType());
-		substitute(oldName, type);
-		return super.visitVariable(variableTree, indent);
 	}
 
 	public String blockVisitor(BlockTree blockTree, String indent) {
 
 		String staticStr = blockTree.isStatic() ? " static" : "";
-		List<String> statementsList = new ArrayList<String>();
+		List<String> statementsList = new ArrayList<>();
 
 		String output = staticStr + " {\n";
 
