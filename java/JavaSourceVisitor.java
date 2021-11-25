@@ -1,26 +1,17 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Stack;
 
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
-import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.tree.JCTree;
 
 public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 
@@ -112,6 +103,7 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		String returnType = obj2str(methodTree.getReturnType());
 		String methodName = obj2str(methodTree.getName());
 
+		//System.err.println("DEBUG: PUSH method = " + methodName);
 		methodStack.push(methodName);
 		String callstackKey = getEnvKey();
 		callstack.put(callstackKey, new HashMap<String, String>());
@@ -126,7 +118,6 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 			output += indent + modifier + returnType + " " + methodName + "(";
 		}
 
-		//System.err.println("DEBUG: PUSH method = " + methodName);
 
 		List<String> paramList = new ArrayList<String>();
 		for (VariableTree variableTree : methodTree.getParameters()) {

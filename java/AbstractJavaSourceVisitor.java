@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,26 +6,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.AnnotationTree;
-import com.sun.source.tree.BlockTree;
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.IfTree;
-import com.sun.source.tree.ImportTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.PackageTree;
-import com.sun.source.tree.StatementTree;
-import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.tree.JCTree;
 
 public class AbstractJavaSourceVisitor extends TreeScanner<String, String> {
 
+	private String[] primitives = new String[] {
+		"boolean",
+		"byte",
+		"char",
+		"double",
+		"float",
+		"int",
+		"long",
+		"short",
+	};
+
 	private boolean doOutput = true;
 	private boolean doReplace = true;
-	protected List<String> primitiveTypes = Arrays.asList("int", "float", "double", "boolean");
+	protected List<String> primitiveTypes = Arrays.asList(primitives);
 	protected Stack<String> classStack = new Stack<String>();
 	protected Stack<String> methodStack = new Stack<String>();
 	protected HashMap<String, String> environment = new HashMap<String, String>();
@@ -49,9 +46,10 @@ public class AbstractJavaSourceVisitor extends TreeScanner<String, String> {
 		String newName = type.substring(0, 1).toLowerCase() + type.substring(1);
 		if (rgetenv(newName) != null) {
 			for (int i = 2;; i++) {
-				if (rgetenv(newName + i) == null)
+				if (rgetenv(newName + i) == null) {
 					newName += i;
 					break;
+				}
 			}
 		}
 
@@ -78,6 +76,7 @@ public class AbstractJavaSourceVisitor extends TreeScanner<String, String> {
 		HashMap<String, String> frame = callstack.get(getEnvKey());
 		Iterator<Map.Entry<String,String>> iterator = frame.entrySet().iterator();
 
+		print("REPLACE");
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> entry = iterator.next();
 			print("DEBUG: " + entry.getKey() + " = " + entry.getValue());
