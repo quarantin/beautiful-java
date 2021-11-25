@@ -105,8 +105,8 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 
 		//System.err.println("DEBUG: PUSH method = " + methodName);
 		methodStack.push(methodName);
-		String callstackKey = getEnvKey();
-		callstack.put(callstackKey, new HashMap<String, String>());
+		String frameKey = getEnvKey();
+		callframes.put(frameKey, new HashMap<String, String>());
 
 
 		String output = "\n";
@@ -150,7 +150,7 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		//System.err.println("DEBUG: POP method = " + methodName);
 		output = replace(output);
 		methodStack.pop();
-		callstack.remove(callstackKey);
+		callframes.remove(frameKey);
 		return output;
 	}
 

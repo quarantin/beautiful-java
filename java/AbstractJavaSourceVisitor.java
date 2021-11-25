@@ -28,7 +28,7 @@ public class AbstractJavaSourceVisitor extends TreeScanner<String, String> {
 	protected Stack<String> methodStack = new Stack<String>();
 	protected HashMap<String, String> environment = new HashMap<String, String>();
 	protected HashMap<String, String> renvironment = new HashMap<String, String>();
-	protected HashMap<String, HashMap<String, String>> callstack = new HashMap<String, HashMap<String, String>>();
+	protected HashMap<String, HashMap<String, String>> callframes = new HashMap<String, HashMap<String, String>>();
 
 	public String getNewVariableName(String symbol, String type) {
 
@@ -73,10 +73,10 @@ public class AbstractJavaSourceVisitor extends TreeScanner<String, String> {
 	}
 
 	public String replace(String output) {
-		HashMap<String, String> frame = callstack.get(getEnvKey());
+		HashMap<String, String> frame = callframes.get(getEnvKey());
 		Iterator<Map.Entry<String,String>> iterator = frame.entrySet().iterator();
 
-		print("REPLACE");
+		print("REPLACE " + frame.size());
 		while (iterator.hasNext()) {
 			Map.Entry<String, String> entry = iterator.next();
 			print("DEBUG: " + entry.getKey() + " = " + entry.getValue());
