@@ -55,6 +55,9 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		classStack.push(simpleName);
 
+		if (simpleName.equals(""))
+			return super.visitClass(classTree, indent + "\t");
+
 		if (indent == null)
 			indent = "";
 
