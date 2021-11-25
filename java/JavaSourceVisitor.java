@@ -46,34 +46,32 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 	@Override
 	public String visitClass(ClassTree classTree, String indent) {
 
-		String modifiers = obj2str(classTree.getModifiers());
 		String simpleName = obj2str(classTree.getSimpleName());
-		String typeParameters = obj2str(classTree.getTypeParameters());
-		String extendsClause = obj2str(classTree.getExtendsClause());
-		String implementsClause = obj2str(classTree.getImplementsClause());
+		if (simpleName.equals(""))
+			return super.visitClass(classTree, indent + "\t");
 
 		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		classStack.push(simpleName);
-
-		if (simpleName.equals(""))
-			return super.visitClass(classTree, indent + "\t");
 
 		if (indent == null)
 			indent = "";
 
 		String output = "\n" + indent;
+
+		String modifiers = obj2str(classTree.getModifiers());
 		if (!modifiers.equals("")) {
 			output += modifiers;
 		}
 
-		if (!simpleName.equals("")) {
-			output += "class " + simpleName + typeParameters;
-		}
+		String typeParameters = obj2str(classTree.getTypeParameters());
+		output += "class " + simpleName + typeParameters;
 
+		String extendsClause = obj2str(classTree.getExtendsClause());
 		if (!extendsClause.equals("")) {
 			output += " extends " + extendsClause;
 		}
 
+		String implementsClause = obj2str(classTree.getImplementsClause());
 		if (!implementsClause.equals("")) {
 			output += " implements " + implementsClause;
 		}
