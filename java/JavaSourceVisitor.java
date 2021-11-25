@@ -27,14 +27,9 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 	@Override
 	public String visitPackage(PackageTree packageTree, String indent) {
 		String packageName = packageTree.getPackageName().toString();
-		List<String> annotationsList = new ArrayList<String>();
-		for (AnnotationTree annotationTree : packageTree.getAnnotations()) {
-			annotationsList.add(annotationTree.toString());
-		}
 
-		String output = "";
-		if (annotationsList.size() > 0) {
-			output += String.join("\n", annotationsList) + "\n";
+		for (AnnotationTree annotationTree : packageTree.getAnnotations()) {
+			println(annotationTree.toString());
 		}
 
 		println("package " + packageName + ";\n");
@@ -56,7 +51,6 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		String typeParameters = obj2str(classTree.getTypeParameters());
 		String extendsClause = obj2str(classTree.getExtendsClause());
 		String implementsClause = obj2str(classTree.getImplementsClause());
-		boolean emptyClass = true;
 
 		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		classStack.push(simpleName);
@@ -67,22 +61,18 @@ public class JavaSourceVisitor extends AbstractJavaSourceVisitor {
 		String output = "\n" + indent;
 		if (!modifiers.equals("")) {
 			output += modifiers;
-			emptyClass = false;
 		}
 
 		if (!simpleName.equals("")) {
 			output += "class " + simpleName + typeParameters;
-			emptyClass = false;
 		}
 
 		if (!extendsClause.equals("")) {
 			output += " extends " + extendsClause;
-			emptyClass = false;
 		}
 
 		if (!implementsClause.equals("")) {
 			output += " implements " + implementsClause;
-			emptyClass = false;
 		}
 
 		output += " {\n";
