@@ -327,12 +327,7 @@ public class JavaSourceVisitor extends TreeScanner<String, String> {
 				output += indent + obj2str(statementTree) + ";\n";
 				break;
 
-			//case CASE:
-			//	output += indent + obj2str(statementTree);
-			//	break;
-
 			default:
-				//println("// WTF: " + statementTree.getKind().toString());
 				output += indent + obj2str(statementTree) + "\n";
 				break;
 			}
