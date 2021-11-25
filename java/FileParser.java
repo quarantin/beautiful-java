@@ -27,11 +27,6 @@ public class FileParser {
 		jcTool = new JavacTool();
 	}
 
-	public String getClassName(String sourcePath) {
-		File sourceFile = new File(sourcePath);
-		return sourceFile.getName().replace(".java", "");
-	}
-
 	public static void main(String[] args) {
 
 		if (args.length == 0) {
@@ -47,7 +42,7 @@ public class FileParser {
 	public void parseJavaSourceFile(String sourcePath)
 	{
 
-		JavaSourceVisitor jsv = new JavaSourceVisitor(getClassName(sourcePath));
+		JavaSourceVisitor jsv = new JavaSourceVisitor();
 
 		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
 
