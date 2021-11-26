@@ -16,14 +16,14 @@ import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.util.Context;
 
 
-public class Beautiful {
+public class BeautifulJava {
 
 	private JavacFileManager jcFileManager;
 
 	private JavacTool jcTool;
 
 	@SuppressWarnings("deprecation")
-	public Beautiful() {
+	public BeautifulJava() {
 		Context context = new Context();
 		jcFileManager = new JavacFileManager(context, true, Charset.defaultCharset());
 		jcTool = new JavacTool();
@@ -32,11 +32,11 @@ public class Beautiful {
 	public static void main(String[] args) {
 
 		if (args.length == 0) {
-			System.out.println("Usage: Beautiful [Java source files]");
+			System.out.println("Usage: BeautifulJava [Java source files]");
 			return;
 		}
 
-		Beautiful sfp = new Beautiful();
+		BeautifulJava sfp = new BeautifulJava();
 		for (int i = 0; i < args.length; i++)
 			sfp.parseJavaSourceFile(args[i]);
 	}

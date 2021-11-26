@@ -83,7 +83,7 @@ while read FILE; do
 		-e '/(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
 		"${FILE}"
 
-	"${JAVA}" -cp "${REPO}/classes" beautifuljava.Beautiful "${FILE}" > "${OUT}"
+	"${JAVA}" -cp "${REPO}/classes" beautifuljava.BeautifulJava "${FILE}" > "${OUT}"
 	if [ "${?}" -eq "0" ]; then
 		mv "${OUT}" "${FILE}"
 	fi
