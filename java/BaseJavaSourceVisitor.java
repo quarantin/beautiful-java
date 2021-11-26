@@ -29,8 +29,9 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		"short",
 	};
 
-	private boolean doOutput = true;
-	private boolean doReplace = true;
+	protected boolean doDebug = false;
+	protected boolean doOutput = true;
+	protected boolean doReplace = true;
 	protected Stack<String> classStack;
 	protected Stack<String> methodStack;
 	protected HashMap<String, HashMap<String, String>> callframes;
@@ -172,7 +173,9 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 	public String replace(String output) {
 
-		debugCallframe();
+		if (doDebug)
+			debugCallframe();
+
 		HashMap<String, String> env = callframes.get(getEnvKey());
 		if (env == null) {
 			return output;
