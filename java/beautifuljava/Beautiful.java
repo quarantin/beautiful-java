@@ -16,14 +16,14 @@ import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.util.Context;
 
 
-public class FileParser {
+public class Beautiful {
 
 	private JavacFileManager jcFileManager;
 
 	private JavacTool jcTool;
 
 	@SuppressWarnings("deprecation")
-	public FileParser() {
+	public Beautiful() {
 		Context context = new Context();
 		jcFileManager = new JavacFileManager(context, true, Charset.defaultCharset());
 		jcTool = new JavacTool();
@@ -32,11 +32,11 @@ public class FileParser {
 	public static void main(String[] args) {
 
 		if (args.length == 0) {
-			System.out.println("Usage: FileParser [Java source files]");
+			System.out.println("Usage: Beautiful [Java source files]");
 			return;
 		}
 
-		FileParser sfp = new FileParser();
+		Beautiful sfp = new Beautiful();
 		for (int i = 0; i < args.length; i++)
 			sfp.parseJavaSourceFile(args[i]);
 	}
