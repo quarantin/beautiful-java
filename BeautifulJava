@@ -78,7 +78,7 @@ while read FILE; do
 
 	sed -i \
 		-e 's/<invokedynamic>//g' \
-		-e 's/(Object\[\])(\(.*\)));/(Object[])new Object[]{\1});/g' \
+		-e 's/(Object\[\])(\("ID",.*\)));/(Object[])new Object[]{\1});/g' \
 		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
 		-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
 		"${FILE}"
