@@ -1,10 +1,9 @@
 
 all:
-	javac -cp .:tools.jar -Xlint:unchecked FileParser.java
+	javac -cp .:lib/tools.jar -d ./classes -Xlint:unchecked beautifuljava/FileParser.java
 
 run:
-	java -cp .:tools.jar FileParser.java IsoPlayer.java
+	java -cp ./classes beautifuljava.FileParser IsoPlayer.java
 
 clean:
-	rm -f *.class
-
+	rm -f classes/beautifuljava/*.class
