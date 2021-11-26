@@ -1,5 +1,4 @@
 {
 	"intellij": "/path/to/intellij/bin/idea.sh",
-	"zomboid": "/path/to/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar",
-	"java": "/path/to/java"
+	"zomboid": "/path/to/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
 }
