@@ -3,17 +3,21 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 
 # Install
 ## Dependencies
-- bash: The main script is written in Bash, so you need a Bash interpreter.
-- jq: You need to install jq. See: https://stedolan.github.io/jq/download/
-- java: You need a valid java runtime environment. See: https://www.java.com/en/download/manual.jsp
+- bash: The main script is written in Bash, so you need a working Bash interpreter.
+- jq: You have to install jq.
+See: https://stedolan.github.io/jq/download/
+- java: You need a valid java runtime environment.
+See: https://www.java.com/en/download/manual.jsp
 
 ## Installing beautiful-java
 		git clone https://github.com/quarantin/beautiful-java
 
 # Configuration
 - Go to the folder where you downloaded beautiful-java:
+
 		cd beautiful-java
 - Copy config.json.example to config.json
+
 		cp config.json.example config.json
 - Open config.json for editing
 ## config.json (Linux)
@@ -34,5 +38,6 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 
 # Usage
 - Run the following command and wait for the script to finish:
+
 		./BeautifulJava
 - Once the script has finished, the source files should be available in beautiful-java/sources/
