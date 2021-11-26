@@ -60,4 +60,4 @@ Update the config of config.json with this (update according to your setup):
 		./BeautifulJava
 - Once the script has finished, the source files should be available in the folder:
 
-	beautiful-java/sources/
+		beautiful-java/sources/
