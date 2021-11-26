@@ -1,3 +1,5 @@
+package beautifuljava;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,7 +47,7 @@ public class FileParser {
 
 		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
 		JavacTask jcTask = (JavacTask)cTask;
-		  
+
 		try {
 
 			Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
