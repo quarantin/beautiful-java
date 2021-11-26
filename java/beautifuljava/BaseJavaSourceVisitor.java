@@ -125,7 +125,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 		String newName = oldName;
 
-		if (doReplace && oldName.startsWith("var")) {
+		if (doReplace && oldName.startsWith("var") && !oldName.endsWith("x")) {
 			newName = getenv(oldName);
 			if (newName == null)
 				newName = getNewName(oldName, type);
@@ -154,8 +154,8 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 		Collections.sort(keySet, new Comparator<String>() {
 			public int compare(String s1, String s2) {
-				int i1 = Integer.parseInt(s1.substring(3).replace("x", ""));
-				int i2 = Integer.parseInt(s2.substring(3).replace("x", ""));
+				int i1 = Integer.parseInt(s1.substring(3));
+				int i2 = Integer.parseInt(s2.substring(3));
 				return i2 - i1;
 			}
 		});
