@@ -3,7 +3,7 @@ This tool is meant to help with reversing the source code from the game **Projec
 
 Once setup properly, when you run the script, it will do the following for you:
 - Grab the Java class files from Project Zomboid folder
-- Decompile them
+- Decompile them using the Java decompiler from IntelliJ
 - Rename missing symbols (such as var1, var2, var3, etc), based on their type.
 
 # Dependencies
