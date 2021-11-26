@@ -45,7 +45,7 @@ Update the content of config.json with this (update according to your setup):
 
 ## Windows
 	cp examples/config.json.windows.example config.json
-	Notepad config.json
+	start notepad++ config.json
 Update the config of config.json with this (update according to your setup):
 
 	{
