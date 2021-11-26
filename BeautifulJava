@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
@@ -24,6 +25,15 @@ elif ! [ -f "${INTELLIJ}" ]; then
 	exit
 fi
 
+JAVA="$(jq -r .java "${CONFIG}")"
+if ! [ -f "${JAVA}" ]; then
+	JAVA="$(dirname $(dirname "${INTELLIJ}"))/jbr/bin/java"
+	if ! [ -f ]; then
+		echo "ERROR: java interpreter not found."
+		exit
+	fi
+fi
+
 ZOMBOID="$(jq -r .zomboid "${CONFIG}")"
 if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: zomboid path missing from config.json"
@@ -43,7 +53,7 @@ echo "Decompiling class files..."
 cd "${OUTDIR}"
 DECOMPILER="${REPO}/lib/java-decompiler.jar"
 MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
-java -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
+"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . .
 
 
 echo "Deleting class files..."
@@ -65,7 +75,7 @@ while read FILE; do
 		-e '/(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
 		"${FILE}"
 
-	java -cp "${REPO}/classes" beautifuljava.Beautiful "${FILE}" > "${OUT}"
+	"${JAVA}" -cp "${REPO}/classes" beautifuljava.Beautiful "${FILE}" > "${OUT}"
 	if [ "${?}" -eq "0" ]; then
 		mv "${OUT}" "${FILE}"
 	fi
