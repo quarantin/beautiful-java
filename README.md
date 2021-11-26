@@ -11,10 +11,6 @@ The main script is written in Bash, so you need a working Bash interpreter.
 ### jq
 You need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
-### Java SDK
-You need a valid JDK environment (Java Development Kit), any version between 11 and 15 included will do. Any different version will probably not work.
-You can download JDK from here: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
-
 # Install
 ## Linux
 	cd "${HOME}"
