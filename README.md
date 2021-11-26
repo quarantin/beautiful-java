@@ -2,12 +2,18 @@
 This is a tool to help reverse-engineering Java code. It's meant to help with reversing the source code from the game Project Zomboid.
 
 # Install
-## Dependencies
-- bash: The main script is written in Bash, so you need a working Bash interpreter.
-- jq: You need the jq command. It can be downloaded from here: https://stedolan.github.io/jq/download/
-- java SDK: You need a valid JDK environment, any version between 11 and 15 included. Any different version will probably not work.
-See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
+## Dependencies
+
+### bash
+The main script is written in Bash, so you need a working Bash interpreter.
+
+### jq
+You need the jq command. It can be downloaded from here: https://stedolan.github.io/jq/download/
+
+### Java SDK
+You need a valid JDK environment (Java Development Kit), any version between 11 and 15 included will do. Any different version will probably not work.
+You can download JDK from here: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
 # Install
 ## Linux
