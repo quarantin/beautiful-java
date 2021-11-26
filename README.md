@@ -9,7 +9,7 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 The main script is written in Bash, so you need a working Bash interpreter.
 
 ### jq
-You need the jq command. It can be downloaded from here: https://stedolan.github.io/jq/download/
+You need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
 ### Java SDK
 You need a valid JDK environment (Java Development Kit), any version between 11 and 15 included will do. Any different version will probably not work.
