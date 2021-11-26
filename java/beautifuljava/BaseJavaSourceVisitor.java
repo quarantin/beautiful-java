@@ -138,7 +138,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	public void debugCallframe() {
 		Map.Entry<String, String> entry;
 		HashMap<String, String> env;
-		Iterator<Map.Entry<String,String>> iterator;
+		Iterator<Map.Entry<String, String>> iterator;
 		String envKey = getEnvKey();
 
 		System.err.println("===================");
@@ -154,8 +154,8 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 		Collections.sort(keySet, new Comparator<String>() {
 			public int compare(String s1, String s2) {
-				int i1 = Integer.parseInt(s1.substring(3));
-				int i2 = Integer.parseInt(s2.substring(3));
+				int i1 = Integer.parseInt(s1.substring(3).replace("x", ""));
+				int i2 = Integer.parseInt(s2.substring(3).replace("x", ""));
 				return i2 - i1;
 			}
 		});
@@ -193,7 +193,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 			}
 		});
 
-		for (String oldSymbol: keySet) {
+		for (String oldSymbol : keySet) {
 			String newSymbol = env.get(oldSymbol);
 
 			if (!canReplace(newSymbol, output))
