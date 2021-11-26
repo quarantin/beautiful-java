@@ -69,7 +69,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			output += " implements " + implementsClause;
 		}
 
-		output += " {\n";
+		output += " {";
 
 		println(output);
 
@@ -120,7 +120,6 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		}
 
 		String methodKey = methodName + "(" + String.join(",", typeList) + ")";
-		//System.err.println("DEBUG: PUSH method = " + methodName);
 		methodStack.push(methodKey);
 
 		String output = "\n";
@@ -151,10 +150,12 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			output += blockVisitor(blockTree, indent + "\t");
 
 
-		//System.err.println("DEBUG: POP method = " + methodName);
 		output = replace(output);
 		methodStack.pop();
-		//callframes.remove(getFrameKey());
+
+		if (!doDebug)
+			callframes.remove(getEnvKey());
+
 		return output;
 	}
 
@@ -179,7 +180,6 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			}
 		}
 
-		output += "\n";
 		output += indent.substring(1) + "}";
 
 		return output;
