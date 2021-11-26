@@ -36,7 +36,8 @@ JAVA="$(jq -r .java "${CONFIG}" | tr '\\' '/')"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname $(dirname "${INTELLIJ}"))/jbr/bin/java"
 	if ! [ -f ]; then
-		echo "ERROR: java interpreter not found. You can add it to config.json, for example \"java\": \"/path/to/java\""
+		echo "ERROR: java interpreter not found."
+		echo "You can add it to config.json, for example: \"java\": \"/path/to/java\""
 		exit
 	fi
 fi
@@ -58,7 +59,7 @@ cp -r zombie "${OUTDIR}"
 
 echo "Decompiling class files..."
 cd "${OUTDIR}"
-DECOMPILER="${REPO}/lib/java-decompiler.jar"
+DECOMPILER="$(dirname $(dirname "${INTELLIJ}"))/plugins/java-decompiler/lib/java-decompiler.jar"
 MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
 "${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . .
 
