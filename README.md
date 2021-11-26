@@ -3,19 +3,30 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 
 # Install
 		git clone https://github.com/quarantin/beautiful-java
-		cd beautiful-java
-		cp config.json.example config.json
-		# Open config.json and edit accordingly to your setup.
-- intellij must be set to point to IntelliJ startup script where you extracted IntelliJ.
-- zomboid must be set to point to Project Zomboid main executable file in your Project Zomboid install folder.
 
-# Examples
-## Linux
-- intellij: ~/IntelliJ/bin/idea.sh
-- zomboid:  ~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar
-## Mac
-- intellij: TODO
-- zomboid: ~/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar
-## Windows
-- intellij: TODO
-- zomboid: /c/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe
+# Configuration
+- Go to the folder where you downloaded beautiful-java:
+		cd beautiful-java
+- Copy config.json.example to config.json
+		cp config.json.example config.json
+- Open config.json for editing
+## config.json (Linux)
+	{
+		"intellij": "/path/to/IntelliJ/bin/idea.sh",
+		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
+	}
+## config.json (Mac)
+	{
+		"intellij": "TODO",
+		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
+	}
+## config.json (Windows)
+	{
+		"intellij": "TODO",
+		"zomboid":  "C:\SteamLibrary\steamapps\common\ProjectZomboid\ProjectZomboid64.exe"
+	}
+
+# Usage
+- Run the following command and wait for the script to finish:
+		./BeautifulJava
+- Once the script has finished, the source files should be available in beautiful-java/sources/
