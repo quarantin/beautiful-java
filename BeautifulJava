@@ -72,7 +72,7 @@ echo "Restoring missing symbols..."
 cd "${OUTDIR}"
 while read FILE; do
 
-	echo "${FILE}"
+	echo "Fixing symbols sources/$(echo ${FILE} | sed 's/^..//')"
 
 	OUT="$(echo "${FILE}" | sed 's/\.java$/.clean.java/')"
 
