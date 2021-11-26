@@ -75,4 +75,4 @@ done < <(find . -type f -name '*.java')
 
 echo "Indenting source files..."
 cd "${OUTDIR}"
-"${INTELLIJ}" format -r -s formatter.xml .
+"${INTELLIJ}" format -r -s "${REPO}/formatter.xml" .
