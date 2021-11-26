@@ -23,22 +23,18 @@ See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.htm
 ## config.json (Linux)
 	{
 		"intellij": "/path/to/IntelliJ/bin/idea.sh",
-		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar",
-		"java": "/path/to/java"
+		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
 	}
 ## config.json (Mac)
 	{
 		"intellij": "TODO",
-		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar",
-		"java": "/path/to/java"
+		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
 	}
 ## config.json (Windows)
 	{
-		"intellij": "TODO",
-		"zomboid":  "C:\SteamLibrary\steamapps\common\ProjectZomboid\ProjectZomboid64.exe",
-		"java": "/path/to/java"
+		"intellij": "C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe",
+		"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
 	}
-
 # Usage
 - Run the following command and wait for the script to finish:
 
