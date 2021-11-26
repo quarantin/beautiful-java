@@ -14,10 +14,10 @@ See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.htm
 # Configuration
 - Go to the folder where you downloaded beautiful-java:
 
-	cd beautiful-java
+		cd beautiful-java
 - Copy config.json.example to config.json
 
-	cp config.json.example config.json
+		cp config.json.example config.json
 - Open config.json for editing
 ## config.json (Linux)
 	{
@@ -40,5 +40,5 @@ See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.htm
 # Usage
 - Run the following command and wait for the script to finish:
 
-	./BeautifulJava
+		./BeautifulJava
 - Once the script has finished, the source files should be available in beautiful-java/sources/
