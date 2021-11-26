@@ -185,7 +185,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 		ArrayList<String> keySet = new ArrayList<>(env.keySet());
 
-		Collections.sort(keySet, new Comparator<>() {
+		Collections.sort(keySet, new Comparator<String>() {
 			public int compare(String s1, String s2) {
 				int i1 = Integer.parseInt(s1.substring(3));
 				int i2 = Integer.parseInt(s2.substring(3));
