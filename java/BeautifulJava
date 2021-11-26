@@ -1,31 +1,40 @@
 #!/bin/bash
 
-CURDIR="$(pwd)"
-OUTDIR="${CURDIR}/sources"
+OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
 
 cd $(dirname "${0}")
-
 REPO="$(pwd)"
-
 CONFIG="${REPO}/config.json"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
+
+elif ! [ -f "${CONFIG}" ]; then
+	echo -e "No config.json found.\nPlease copy config.json.example to config.json and edit the file according to your setup."
+	exit
 fi
 
 INTELLIJ="$(jq -r .intellij "${CONFIG}")"
 if [ -z "${INTELLIJ}" ]; then
-	echo "intellij path missing from config.json"
+	echo "ERROR: intellij path missing from config.json"
+	exit
+
+elif ! [ -f "${INTELLIJ}" ]; then
+	echo "ERROR: Path to IntelliJ is invalid: ${INTELLIJ}"
 	exit
 fi
 
 ZOMBOID="$(jq -r .zomboid "${CONFIG}")"
 if [ -z "${ZOMBOID}" ]; then
-	echo "zomboid path missing from config.json"
+	echo "ERROR: zomboid path missing from config.json"
+
+elif ! [ -f "${ZOMBOID}" ]; then
+	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
 fi
 
 
 echo "Copying class files..."
+ZOMBOID="$(dirname "${ZOMBOID}")"
 cd "${ZOMBOID}"
 cp -r zombie "${OUTDIR}"
 
@@ -47,14 +56,13 @@ while read FILE; do
 
 	echo "${FILE}"
 
-	TMP="$(echo "${FILE}" | sed 's/\.java$/.tmp.java/')"
 	OUT="$(echo "${FILE}" | sed 's/\.java$/.clean.java/')"
 
 	sed -i \
 		-e 's/<invokedynamic>//g' \
 		-e 's/(Object\[\])(\(.*\)));/(Object[])new Object[]{\1});/g' \
 		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
-		-e '/[ \t]\+(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
+		-e '/(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
 		"${FILE}"
 
 	java -cp "${REPO}/classes" beautifuljava.Beautiful "${FILE}" > "${OUT}"
