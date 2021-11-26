@@ -9,6 +9,8 @@ The main script is written in Bash, so you need a working Bash interpreter.
 You also need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
 # Install
+Start a Bash interpreter, and run the following commands:
+
 	cd "${HOME}"
 	mkdir -p repos
 	cd repos
