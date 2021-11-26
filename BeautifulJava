@@ -80,7 +80,7 @@ while read FILE; do
 		-e 's/<invokedynamic>//g' \
 		-e 's/(Object\[\])(\(.*\)));/(Object[])new Object[]{\1});/g' \
 		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
-		-e '/(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
+		-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
 		"${FILE}"
 
 	"${JAVA}" -cp "${REPO}/classes" beautifuljava.BeautifulJava "${FILE}" > "${OUT}"
