@@ -6,8 +6,8 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 - bash: The main script is written in Bash, so you need a working Bash interpreter.
 - jq: You have to install jq.
 See: https://stedolan.github.io/jq/download/
-- java: You need a valid java runtime environment. You need at minimum java version 11. Anything lower will probably not work.
-See: https://www.java.com/en/download/manual.jsp
+- java SDK: You need a valid JDK environment version 15. Anything different will probably not work.
+See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
 ## Installing beautiful-java
 		git clone https://github.com/quarantin/beautiful-java
