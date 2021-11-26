@@ -8,30 +8,42 @@ This is a tool to help reverse-engineering Java code. It's meant to help with re
 - java SDK: You need a valid JDK environment, any version between 11 and 15 included. Any different version will probably not work.
 See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html
 
-## Installing beautiful-java
+
+# Install
+## Linux
+	cd "${HOME}"
+	mkdir -p repos
+	cd repos
 	git clone https://github.com/quarantin/beautiful-java
-
-# Configuration
-- Go to the folder where you downloaded beautiful-java:
-
-		cd beautiful-java
-- Copy config.json.example to config.json
-
-		cp config.json.example config.json
-- Open config.json for editing
-## config.json (Linux)
+	cd beautiful-java
+	cp config.json.linux.example config.json
+	vim config.json
 	{
 		"intellij": "/path/to/IntelliJ/bin/idea.sh",
 		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
 	}
 
-## config.json (Mac)
+## Mac OSX
+	cd "${HOME}"
+	mkdir -p repos
+	cd repos
+	git clone https://github.com/quarantin/beautiful-java
+	cd beautiful-java
+	cp config.json.macosx.example config.json
+	open -a TextEdit config.json
 	{
 		"intellij": "TODO",
 		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
 	}
 
-## config.json (Windows)
+## Windows
+	cd "${HOME}"
+	mkdir -p repos
+	cd repos
+	git clone https://github.com/quarantin/beautiful-java
+	cd beautiful-java
+	cp config.json.windows.example config.json
+	Notepad config.json
 	{
 		"intellij": "C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe",
 		"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
@@ -41,4 +53,4 @@ See: https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.htm
 - Run the following command and wait for the script to finish:
 
 		./BeautifulJava
-- Once the script has finished, the source files should be available in beautiful-java/sources/
+- Once the script has finished, the source files should be available in sources/ folder.
