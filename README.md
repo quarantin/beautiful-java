@@ -23,17 +23,20 @@ See: https://www.java.com/en/download/manual.jsp
 ## config.json (Linux)
 	{
 		"intellij": "/path/to/IntelliJ/bin/idea.sh",
-		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
+		"zomboid": "/path/to/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar",
+		"java": "/path/to/java"
 	}
 ## config.json (Mac)
 	{
 		"intellij": "TODO",
-		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
+		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar",
+		"java": "/path/to/java"
 	}
 ## config.json (Windows)
 	{
 		"intellij": "TODO",
-		"zomboid":  "C:\SteamLibrary\steamapps\common\ProjectZomboid\ProjectZomboid64.exe"
+		"zomboid":  "C:\SteamLibrary\steamapps\common\ProjectZomboid\ProjectZomboid64.exe",
+		"java": "/path/to/java"
 	}
 
 # Usage
