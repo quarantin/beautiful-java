@@ -1,14 +1,11 @@
 # beautiful-java
 This is a tool to help reverse-engineering Java code. It's meant to help with reversing the source code from the game Project Zomboid.
 
-# Install
-
-## Dependencies
-
-### bash
+# Dependencies
+## bash
 The main script is written in Bash, so you need a working Bash interpreter.
 
-### jq
+## jq
 You need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
 # Install
