@@ -19,10 +19,10 @@ You need the jq command. In case you don't have it already, it can be downloaded
 	vim config.json
 Update the content of config.json with this (adapt according to your setup):
 
-		{
-			"intellij": "~/IntelliJ/bin/idea.sh",
-			"zomboid": "~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
-		}
+	{
+		"intellij": "~/IntelliJ/bin/idea.sh",
+		"zomboid": "~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
+	}
 
 ## Mac OSX
 	cd "${HOME}"
@@ -34,10 +34,10 @@ Update the content of config.json with this (adapt according to your setup):
 	open -a TextEdit config.json
 Update the content of config.json with this (adapt according to your setup):
 
-		{
-			"intellij": "TODO",
-			"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
-		}
+	{
+		"intellij": "TODO",
+		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
+	}
 
 ## Windows
 	cd "${HOME}"
@@ -49,10 +49,10 @@ Update the content of config.json with this (adapt according to your setup):
 	Notepad config.json
 Update the config of config.json with this (adapt according to your setup):
 
-		{
-			"intellij": "C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe",
-			"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
-		}
+	{
+		"intellij": "C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe",
+		"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
+	}
 
 # Usage
 - Run the following command and wait for the script to finish:
