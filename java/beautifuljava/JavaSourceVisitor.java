@@ -76,7 +76,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		println(output);
 
 		for (Tree memberTree : classTree.getMembers()) {
-			switch(memberTree.getKind()) {
+			switch (memberTree.getKind()) {
 
 			case BLOCK:
 				print(blockVisitor((BlockTree)memberTree, indent + "\t"));
