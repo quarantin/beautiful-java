@@ -1,6 +1,7 @@
 # BeautifulJava
 This tool is meant to help with reversing the source code from the game **Project Zomboid**.
-Once setup properly, when you run the sciprt it will do the following for you:
+
+Once setup properly, when you run the script, it will do the following for you:
 - Grab the Java class files from Project Zomboid folder
 - Decompile them
 - Rename missing symbols (such as var1, var2, var3, etc), based on their type.
