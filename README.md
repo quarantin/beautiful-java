@@ -9,12 +9,14 @@ The main script is written in Bash, so you need a working Bash interpreter.
 You also need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
 # Install
-## Linux
 	cd "${HOME}"
 	mkdir -p repos
 	cd repos
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
+
+# Configuration
+## Linux
 	cp config.json.linux.example config.json
 	vim config.json
 Update the content of config.json with this (update according to your setup):
@@ -25,11 +27,6 @@ Update the content of config.json with this (update according to your setup):
 	}
 
 ## Mac OSX
-	cd "${HOME}"
-	mkdir -p repos
-	cd repos
-	git clone https://github.com/quarantin/beautiful-java
-	cd beautiful-java
 	cp config.json.macosx.example config.json
 	open -a TextEdit config.json
 Update the content of config.json with this (update according to your setup):
@@ -40,11 +37,6 @@ Update the content of config.json with this (update according to your setup):
 	}
 
 ## Windows
-	cd "${HOME}"
-	mkdir -p repos
-	cd repos
-	git clone https://github.com/quarantin/beautiful-java
-	cd beautiful-java
 	cp config.json.windows.example config.json
 	Notepad config.json
 Update the config of config.json with this (update according to your setup):
