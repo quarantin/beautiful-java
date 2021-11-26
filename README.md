@@ -17,7 +17,7 @@ You need the jq command. In case you don't have it already, it can be downloaded
 	cd beautiful-java
 	cp config.json.linux.example config.json
 	vim config.json
-Update the content of config.json with this (adapt according to your setup):
+Update the content of config.json with this (update according to your setup):
 
 	{
 		"intellij": "~/IntelliJ/bin/idea.sh",
@@ -32,7 +32,7 @@ Update the content of config.json with this (adapt according to your setup):
 	cd beautiful-java
 	cp config.json.macosx.example config.json
 	open -a TextEdit config.json
-Update the content of config.json with this (adapt according to your setup):
+Update the content of config.json with this (update according to your setup):
 
 	{
 		"intellij": "TODO",
@@ -47,7 +47,7 @@ Update the content of config.json with this (adapt according to your setup):
 	cd beautiful-java
 	cp config.json.windows.example config.json
 	Notepad config.json
-Update the config of config.json with this (adapt according to your setup):
+Update the config of config.json with this (update according to your setup):
 
 	{
 		"intellij": "C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe",
