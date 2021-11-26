@@ -1,0 +1,70 @@
+#!/bin/bash
+
+CURDIR="$(pwd)"
+OUTDIR="${CURDIR}/sources"
+mkdir -p "${OUTDIR}"
+
+cd $(dirname "${0}")
+
+REPO="$(pwd)"
+
+CONFIG="${REPO}/config.json"
+if ! [ -z "${1}" ]; then
+	CONFIG="${1}"
+fi
+
+INTELLIJ="$(jq -r .intellij "${CONFIG}")"
+if [ -z "${INTELLIJ}" ]; then
+	echo "intellij path missing from config.json"
+	exit
+fi
+
+ZOMBOID="$(jq -r .zomboid "${CONFIG}")"
+if [ -z "${ZOMBOID}" ]; then
+	echo "zomboid path missing from config.json"
+fi
+
+
+echo "Copying class files..."
+cd "${ZOMBOID}"
+cp -r zombie "${OUTDIR}"
+
+
+echo "Decompiling class files..."
+cd "${OUTDIR}"
+DECOMPILER="${REPO}/lib/java-decompiler.jar"
+MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
+java -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
+
+
+echo "Deleting class files..."
+find . -name '*.class' -exec rm -f {} \; > /dev/null
+
+
+echo "Restoring missing symbols..."
+cd "${OUTDIR}"
+while read FILE; do
+
+	echo "${FILE}"
+
+	TMP="$(echo "${FILE}" | sed 's/\.java$/.tmp.java/')"
+	OUT="$(echo "${FILE}" | sed 's/\.java$/.clean.java/')"
+
+	sed -i \
+		-e 's/<invokedynamic>//g' \
+		-e 's/(Object\[\])(\(.*\)));/(Object[])new Object[]{\1});/g' \
+		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
+		-e '/[ \t]\+(float) var12 \* (1.0F - (float) var1.getPerkLevel(PerkFactory.Perks.Aiming) \/ 15.0F);/d' \
+		"${FILE}"
+
+	java -cp "${REPO}/classes" beautifuljava.Beautiful "${FILE}" > "${OUT}"
+	if [ "${?}" -eq "0" ]; then
+		mv "${OUT}" "${FILE}"
+	fi
+
+done < <(find . -type f -name '*.java')
+
+
+echo "Indenting source files..."
+cd "${OUTDIR}"
+"${INTELLIJ}" format -r -s formatter.xml .
