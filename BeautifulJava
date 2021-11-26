@@ -2,6 +2,7 @@
 set -e
 
 OUTDIR="$(pwd)/sources"
+rm -rf "${OUTDIR}/zombie/"
 mkdir -p "${OUTDIR}"
 
 cd $(dirname "${0}")
