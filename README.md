@@ -54,6 +54,12 @@ Update the config of config.json with this (update according to your setup):
 		"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
 	}
 
+# Updates
+Updating BeautifulJava is done as follow:
+
+		cd "${HOME}/repos/beautfiul-java/"
+		git pull
+
 # Usage
 - Run the following command and wait for the script to finish:
 
