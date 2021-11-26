@@ -22,7 +22,7 @@ elif ! [ -f "${CONFIG}" ]; then
 	exit
 fi
 
-INTELLIJ="$(jq -r .intellij "${CONFIG}" | tr '\\' '/')"
+INTELLIJ="$(jq -r .intellij "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if [ -z "${INTELLIJ}" ]; then
 	echo "ERROR: intellij path missing from config.json"
 	exit
@@ -32,7 +32,7 @@ elif ! [ -f "${INTELLIJ}" ]; then
 	exit
 fi
 
-JAVA="$(jq -r .java "${CONFIG}" | tr '\\' '/')"
+JAVA="$(jq -r .java "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname $(dirname "${INTELLIJ}"))/jbr/bin/java"
 	if ! [ -f ]; then
@@ -42,7 +42,7 @@ if ! [ -f "${JAVA}" ]; then
 	fi
 fi
 
-ZOMBOID="$(jq -r .zomboid "${CONFIG}" | tr '\\' '/')"
+ZOMBOID="$(jq -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/'))"
 if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: zomboid path missing from config.json"
 
