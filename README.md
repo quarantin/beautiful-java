@@ -57,13 +57,13 @@ Update the config of config.json with this (update according to your setup):
 # Updates
 Updating BeautifulJava is done as follow:
 
-		cd "${HOME}/repos/beautfiul-java/"
-		git pull
+	cd "${HOME}/repos/beautfiul-java/"
+	git pull
 
 # Usage
-- Run the following command and wait for the script to finish:
+Run the following command and wait for the script to finish:
 
-		./BeautifulJava
-- Once the script has finished, the source files should be available in the folder:
+	./BeautifulJava
+Once the script has finished, the source files should be available in the folder:
 
-		beautiful-java/sources/
+	beautiful-java/sources/
