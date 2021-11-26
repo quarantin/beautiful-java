@@ -42,12 +42,14 @@ if ! [ -f "${JAVA}" ]; then
 	fi
 fi
 
-ZOMBOID="$(jq -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/'))"
+ZOMBOID="$(jq -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: zomboid path missing from config.json"
+	exit
 
 elif ! [ -f "${ZOMBOID}" ]; then
 	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
+	exit
 fi
 
 
