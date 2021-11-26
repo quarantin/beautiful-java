@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+JQ=$(which jq)
+if [ -z "${JQ}" ] || ! [ -z "${JQ}" ]; then
+	echo "You have to install jq. It can be downloaded from here: https://stedolan.github.io/jq/download/"
+	exit
+fi
+
 OUTDIR="$(pwd)/sources"
 rm -rf "${OUTDIR}/zombie/"
 mkdir -p "${OUTDIR}"
@@ -16,7 +22,7 @@ elif ! [ -f "${CONFIG}" ]; then
 	exit
 fi
 
-INTELLIJ="$(jq -r .intellij "${CONFIG}")"
+INTELLIJ="$(jq -r .intellij "${CONFIG}" | tr '\\' '/')"
 if [ -z "${INTELLIJ}" ]; then
 	echo "ERROR: intellij path missing from config.json"
 	exit
@@ -26,16 +32,16 @@ elif ! [ -f "${INTELLIJ}" ]; then
 	exit
 fi
 
-JAVA="$(jq -r .java "${CONFIG}")"
+JAVA="$(jq -r .java "${CONFIG}" | tr '\\' '/')"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname $(dirname "${INTELLIJ}"))/jbr/bin/java"
 	if ! [ -f ]; then
-		echo "ERROR: java interpreter not found."
+		echo "ERROR: java interpreter not found. You can add it to config.json, for example \"java\": \"/path/to/java\""
 		exit
 	fi
 fi
 
-ZOMBOID="$(jq -r .zomboid "${CONFIG}")"
+ZOMBOID="$(jq -r .zomboid "${CONFIG}" | tr '\\' '/')"
 if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: zomboid path missing from config.json"
 
