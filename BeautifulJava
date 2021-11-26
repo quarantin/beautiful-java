@@ -2,7 +2,7 @@
 set -e
 
 JQ=$(which jq)
-if [ -z "${JQ}" ] || ! [ -z "${JQ}" ]; then
+if [ -z "${JQ}" ] || ! [ -f "${JQ}" ]; then
 	echo "You have to install jq. It can be downloaded from here: https://stedolan.github.io/jq/download/"
 	exit
 fi
