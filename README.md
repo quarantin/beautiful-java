@@ -65,4 +65,4 @@ Run the following command and wait for the script to finish:
 	./BeautifulJava
 Once the script has finished, the source files should be available in the folder:
 
-	beautiful-java/sources/
+	${HOME}/repos/beautiful-java/sources/
