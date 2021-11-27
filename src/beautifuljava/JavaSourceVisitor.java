@@ -68,18 +68,11 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			return super.visitClass(classTree, indent);
 		}
 
-		if (indent == null)
-			indent = "";
-
-		String output = "\n" + indent;
-
 		String modifiers = obj2str(classTree.getModifiers());
-		output += modifiers;
-
 		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
-		//output += classKind + " " + simpleName + typeParameters;
-		output += classKeyword + simpleName + typeParameters;
+
+		String output = "\n" + indent + modifiers + classKeyword + simpleName + typeParameters;
 
 		String extendsClause = obj2str(classTree.getExtendsClause());
 		if (!extendsClause.equals("")) {
