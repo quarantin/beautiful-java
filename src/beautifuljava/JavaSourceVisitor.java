@@ -20,6 +20,20 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		super(vv);
 	}
 
+	private String getClassKeyword(ClassTree classTree) {
+		switch(classTree.getKind()) {
+
+		case CLASS:
+			return "class ";
+
+		case INTERFACE: // Already part of the modifiers
+			return "";
+
+		default:
+			throw new RuntimeException("Unsupported kind of object: " + classTree.getKind());
+		}
+	}
+
 	@Override
 	public String visitPackage(PackageTree packageTree, String indent) {
 
@@ -48,18 +62,24 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		classStack.push(simpleName);
 
+		if (classTree.getKind().equals(Tree.Kind.ENUM)) {
+			print(enumVisitor(classTree, indent));
+			classStack.pop();
+			return super.visitClass(classTree, indent);
+		}
+
 		if (indent == null)
 			indent = "";
 
 		String output = "\n" + indent;
 
 		String modifiers = obj2str(classTree.getModifiers());
-		if (!modifiers.equals("")) {
-			output += modifiers;
-		}
+		output += modifiers;
 
+		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
-		output += "class " + simpleName + typeParameters;
+		//output += classKind + " " + simpleName + typeParameters;
+		output += classKeyword + simpleName + typeParameters;
 
 		String extendsClause = obj2str(classTree.getExtendsClause());
 		if (!extendsClause.equals("")) {
@@ -79,15 +99,15 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			switch (memberTree.getKind()) {
 
 			case BLOCK:
-				print(blockVisitor((BlockTree)memberTree, indent + "\t"));
+				print(blockVisitor((BlockTree)memberTree, indent + this.indent));
 				break;
 
 			case METHOD:
-				print(methodVisitor((MethodTree)memberTree, indent + "\t") + "\n");
+				print(methodVisitor((MethodTree)memberTree, indent + this.indent) + "\n");
 				break;
 
 			case VARIABLE:
-				print(variableVisitor((VariableTree)memberTree, indent + "\t"));
+				print(variableVisitor((VariableTree)memberTree, indent + this.indent));
 				break;
 			}
 		}
@@ -102,14 +122,79 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		return result;
 	}
 
+	public String enumVisitor(ClassTree classTree, String indent) {
+
+		String implementsClause = classTree.getImplementsClause().toString();
+		List<? extends Tree> members = classTree.getMembers();
+		String modifiers = classTree.getModifiers().toString();
+		String simpleName = classTree.getSimpleName().toString();
+
+		if (simpleName.equals(""))
+			throw new RuntimeException("Found enum with no name!");
+
+		if (classTree.getExtendsClause() != null)
+			throw new RuntimeException("Found enum with non-null extends clause!");
+
+		if (!obj2str(classTree.getTypeParameters()).equals(""))
+			throw new RuntimeException("Found enum with type parameters!");
+
+		String output = "\n" + indent + modifiers + "enum " + simpleName;
+
+		if (!implementsClause.equals("")) {
+			output += " implements " + implementsClause;
+		}
+
+		output += " {\n";
+
+		ArrayList<String> blocks = new ArrayList<>();
+		ArrayList<String> methods = new ArrayList<>();
+		ArrayList<String> variables = new ArrayList<>();
+
+		for (Tree memberTree : classTree.getMembers()) {
+			switch (memberTree.getKind()) {
+
+			case BLOCK:
+				blocks.add(blockVisitor((BlockTree)memberTree, indent + this.indent));
+				break;
+
+			case METHOD:
+				methods.add(methodVisitor((MethodTree)memberTree, indent + this.indent));
+				break;
+
+			case VARIABLE:
+				variables.add(indent + obj2str(((VariableTree)memberTree).getName()));
+				break;
+			}
+		}
+
+		output += indent + String.join(",\n", variables) + ";";
+
+		if (blocks.size() > 0) {
+
+			output += "\n";
+
+			for (String block : blocks)
+				output += block + "\n";
+		}
+
+		if (methods.size() > 0) {
+
+			output += "\n";
+
+			for (String method : methods)
+				output += method + "\n";
+		}
+
+		output += "}\n";
+
+		return output;
+	}
+
 	public String methodVisitor(MethodTree methodTree, String indent) {
 
 		String modifier   = obj2str(methodTree.getModifiers());
 		String returnType = obj2str(methodTree.getReturnType());
 		String methodName = obj2str(methodTree.getName());
-
-		if (methodName.equals("<init>"))
-			methodName = classStack.peek();
 
 		List<String> typeList = new ArrayList<>();
 		List<String> paramList = new ArrayList<>();
@@ -121,16 +206,17 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			paramList.add(type + " " + oldName);
 		}
 
-		String methodKey = methodName + "(" + String.join(",", typeList) + ")";
-		methodStack.push(methodKey);
-
 		String output = "\n";
 		if (methodName.equals("<init>")) {
+			methodName = classStack.peek();
 			output += indent + modifier + methodName + "(";
 		}
 		else {
 			output += indent + modifier + returnType + " " + methodName + "(";
 		}
+
+		String methodKey = methodName + "(" + String.join(",", typeList) + ")";
+		methodStack.push(methodKey);
 
 		output += String.join(", ", paramList) + ")";
 
@@ -149,7 +235,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		if (blockTree == null)
 			output += ";";
 		else
-			output += blockVisitor(blockTree, indent + "\t");
+			output += " " + blockVisitor(blockTree, indent + this.indent);
 
 
 		output = replace(output);
@@ -163,10 +249,10 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 
 	public String blockVisitor(BlockTree blockTree, String indent) {
 
-		String staticStr = blockTree.isStatic() ? " static" : "";
+		String staticStr = blockTree.isStatic() ? "static " : "";
 		List<String> statementsList = new ArrayList<>();
 
-		String output = staticStr + " {\n";
+		String output = staticStr + "{\n";
 
 		for (StatementTree statementTree : blockTree.getStatements()) {
 

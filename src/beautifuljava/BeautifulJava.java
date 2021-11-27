@@ -54,12 +54,12 @@ public class BeautifulJava {
 
 			VariableVisitor vv = new VariableVisitor();
 			for (CompilationUnitTree codeTree : codeResult) {
-				codeTree.accept(vv, null);
+				codeTree.accept(vv, "");
 			}
 
 			JavaSourceVisitor jsv = new JavaSourceVisitor(vv);
 			for (CompilationUnitTree codeTree : codeResult) {
-				codeTree.accept(jsv, null);
+				codeTree.accept(jsv, "");
 			}
 		}
 		catch (IOException ioerror) {
