@@ -1,5 +1,6 @@
+all: clean build
 
-all:
+build:
 	javac -cp ./src:lib/tools.jar -source 8 -target 8 -d ./classes -Xlint:unchecked src/beautifuljava/BeautifulJava.java
 
 run:
