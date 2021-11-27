@@ -31,6 +31,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		"short",
 	};
 
+	protected String indent = "\t";
 	protected boolean doDebug = false;
 	protected boolean doOutput = true;
 	protected boolean doReplace = true;
