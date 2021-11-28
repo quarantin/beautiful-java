@@ -9,12 +9,7 @@ if [ -z "${JQ}" ] || ! [ -f "${JQ}" ]; then
 	exit
 fi
 
-OUTDIR="$(pwd)/sources"
-rm -rf "${OUTDIR}/zombie/"
-mkdir -p "${OUTDIR}"
-
-cd $(dirname "${0}")
-REPO="$(dirname "${0}")"
+REPO="$(realpath "$(dirname "${0}")")"
 CONFIG="${REPO}/config.json"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
@@ -39,7 +34,6 @@ if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname $(dirname "${INTELLIJ}"))/jbr/bin/java"
 	if ! [ -f ]; then
 		echo "ERROR: java interpreter not found."
-		echo "You can add it to config.json, for example: \"java\": \"/path/to/java\""
 		exit
 	fi
 fi
@@ -54,29 +48,48 @@ elif ! [ -f "${ZOMBOID}" ]; then
 	exit
 fi
 
+ZOMBOID="$(dirname "${ZOMBOID}")"
+DECOMPILER="$(dirname "$(dirname "${INTELLIJ}")")/plugins/java-decompiler/lib/java-decompiler.jar"
+MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
+
+OUTDIR="$(pwd)/sources"
+mkdir -p "${OUTDIR}"
+
+echo "Getting Zomboid version..."
+cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
+cd "${OUTDIR}"
+"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
+VERSION="$(grep -o 'new GameVersion(.*' Core.java | cut -f2 -d'(' | cut -f1,2 -d',' | sed 's/, /./')"
+if [ -z "${VERSION}" ]; then
+	VERSION="$(grep 'versionNumber =' Core.java | cut -f2 -d= | cut -f2 -d'"')"
+fi
+rm -f Core.class Core.java
+if [ -z "${VERSION}" ]; then
+	#rm -rf "${OUTDIR}/zombie/"
+	echo
+else
+	OUTDIR="${OUTDIR}/${VERSION}"
+	#rm -rf "${OUTDIR}/"
+	mkdir -p "${OUTDIR}"
+fi
 
 echo "Copying class files..."
-ZOMBOID="$(dirname "${ZOMBOID}")"
-cd "${ZOMBOID}"
-cp -r zombie "${OUTDIR}"
+cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
 
 
 echo "Decompiling class files..."
 cd "${OUTDIR}"
-DECOMPILER="$(dirname $(dirname "${INTELLIJ}"))/plugins/java-decompiler/lib/java-decompiler.jar"
-MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
 "${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . .
 
 
 echo "Deleting class files..."
-find . -name '*.class' -exec rm -f {} \; > /dev/null
-
+find "${OUTDIR}" -name '*.class' -exec rm -f {} \; > /dev/null
 
 echo "Restoring missing symbols..."
 cd "${OUTDIR}"
 while read FILE; do
 
-	echo "Fixing symbols sources/$(echo ${FILE} | sed 's/^..//')"
+	echo "Fixing symbols ${FILE}"
 
 	OUT="$(echo "${FILE}" | sed 's/\.java$/.clean.java/')"
 
@@ -92,7 +105,7 @@ while read FILE; do
 		mv "${OUT}" "${FILE}"
 	fi
 
-done < <(find . -type f -name '*.java')
+done < <(find "${OUTDIR}" -type f -name '*.java')
 
 
 echo "Indenting source files..."
