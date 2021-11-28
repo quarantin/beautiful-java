@@ -39,7 +39,6 @@ Update the content of config.json with this (update according to your setup):
 	}
 
 ## Mac OSX
-	cp BeautifulJava.macosx BeautifulJava
 	cp examples/config.json.macosx.example config.json
 	open -a TextEdit config.json
 Update the content of config.json with this (update according to your setup):
