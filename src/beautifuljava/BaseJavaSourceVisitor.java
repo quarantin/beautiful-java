@@ -30,16 +30,22 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		"short",
 	};
 
-	protected String indent = "\t";
-	protected boolean doDebug = false;
-	protected boolean doOutput = true;
-	protected boolean doReplace = true;
+	protected String indent;
+	protected boolean doDebug;
+	protected boolean doOutput;
+	protected boolean doReplace;
 	protected Stack<String> classStack;
 	protected Stack<String> methodStack;
 	protected HashMap<String, HashMap<String, String>> callframes;
 	protected HashMap<String, HashMap<String, String>> rcallframes;
 
 	public BaseJavaSourceVisitor() {
+		this("\t");
+	}
+
+	public BaseJavaSourceVisitor(String indent) {
+		this.indent = indent;
+		this.doDebug = false;
 		this.doOutput = true;
 		this.doReplace = true;
 		this.classStack = new Stack<>();
@@ -49,6 +55,10 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	}
 
 	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv) {
+		this.indent = indent;
+		this.doDebug = false;
+		this.doOutput = true;
+		this.doReplace = true;
 		this.doOutput = bjsv.doOutput;
 		this.doReplace = bjsv.doReplace;
 		this.classStack = bjsv.classStack;
