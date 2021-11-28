@@ -131,20 +131,6 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		return getUniqueName(type, primitive);
 	}
 
-	public void substitute(String oldName, String type) {
-
-		String newName = oldName;
-
-		if (doReplace && oldName.startsWith("var") && !oldName.endsWith("x")) {
-			newName = getenv(oldName);
-			if (newName == null)
-				newName = getNewName(oldName, type);
-		}
-
-		if (!oldName.equals(newName))
-			setenv(oldName, newName);
-	}
-
 	public void debugCallframe() {
 		Map.Entry<String, String> entry;
 		HashMap<String, String> env;
