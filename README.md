@@ -8,10 +8,10 @@ Once setup properly, when you run the script, it will do the following for you:
 
 # Dependencies
 ## jq
-You have to install the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
+You'll have to install the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
 ## IntelliJ
-And you also have to install IntelliJ. BeautifulJava is using it for disassembling and formatting the code. It can be downloaded from here: https://www.jetbrains.com/idea/download/
+You'll also have to install IntelliJ. BeautifulJava is using it for disassembling and formatting the code. It can be downloaded from here: https://www.jetbrains.com/idea/download/
 
 ## Windows Users Only
 If you're running Windows, you'll have to install the following programs:
