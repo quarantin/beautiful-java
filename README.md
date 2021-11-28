@@ -39,8 +39,8 @@ Update the content of config.json with this (update according to your setup):
 Update the content of config.json with this (update according to your setup):
 
 	{
-		"intellij": "TODO",
-		"zomboid": "/path/to/Library/Application Support/Steam/SteamApps/common/ProjectZomboid/pzexe.jar"
+		"intellij": "/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh",
+		"zomboid": "~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/pzexe.jar"
 	}
 
 ## Windows
