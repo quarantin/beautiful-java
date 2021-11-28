@@ -89,7 +89,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 
 		output += " {";
 
-		print(output);
+		println(output);
 
 		for (Tree memberTree : classTree.getMembers()) {
 			switch (memberTree.getKind()) {
