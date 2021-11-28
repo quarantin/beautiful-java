@@ -27,7 +27,10 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			return "class ";
 
 		case INTERFACE: // Already part of the modifiers
-			return "";
+			return "interface ";
+
+		case ANNOTATION_TYPE:
+			return "interface ";
 
 		default:
 			throw new RuntimeException("Unsupported kind of object: " + classTree.getKind());
@@ -68,7 +71,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 			return super.visitClass(classTree, indent);
 		}
 
-		String modifiers = obj2str(classTree.getModifiers());
+		String modifiers = obj2str(classTree.getModifiers()).replace("interface", "").replace("  ", " ");
 		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
 
@@ -86,7 +89,7 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 
 		output += " {";
 
-		println(output);
+		print(output);
 
 		for (Tree memberTree : classTree.getMembers()) {
 			switch (memberTree.getKind()) {
