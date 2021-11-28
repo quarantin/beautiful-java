@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -139,7 +138,6 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	public void debugCallframe() {
 		Map.Entry<String, String> entry;
 		HashMap<String, String> env;
-		Iterator<Map.Entry<String, String>> iterator;
 		String envKey = getEnvKey();
 
 		System.err.println("===================");
