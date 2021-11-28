@@ -7,9 +7,6 @@ Once setup properly, when you run the script, it will do the following for you:
 - Rename missing symbols (such as var1, var2, var3, etc), based on their type.
 
 # Dependencies
-## bash
-The main script is written in Bash, so you need a working Bash interpreter.
-
 ## jq
 You have to install the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
