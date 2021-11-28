@@ -13,6 +13,9 @@ The main script is written in Bash, so you need a working Bash interpreter.
 ## jq
 You also need the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
 
+## IntelliJ
+And you need to install IntelliJ. It can be downloaded from here: https://www.jetbrains.com/idea/download/
+
 # Install
 Start a Bash interpreter, and run the following commands:
 
