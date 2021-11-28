@@ -237,9 +237,6 @@ public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 		output = replace(output);
 		methodStack.pop();
 
-		if (!doDebug)
-			callframes.remove(getEnvKey());
-
 		return output;
 	}
 
