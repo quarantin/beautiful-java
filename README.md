@@ -62,7 +62,7 @@ Update the config of config.json with this (update according to your setup):
 # Updates
 Updating BeautifulJava is done as follow:
 
-	cd "${HOME}/repos/beautfiul-java/"
+	cd "${HOME}/repos/beautiful-java/"
 	git pull
 
 # Usage
