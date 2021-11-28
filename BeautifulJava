@@ -51,9 +51,9 @@ fi
 ZOMBOID="$(dirname "${ZOMBOID}")"
 DECOMPILER="$(dirname "$(dirname "${INTELLIJ}")")/plugins/java-decompiler/lib/java-decompiler.jar"
 MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
-
 OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
+
 
 echo "Getting Zomboid version..."
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
@@ -71,6 +71,7 @@ else
 	rm -rf "${OUTDIR}/"
 	mkdir -p "${OUTDIR}"
 fi
+
 
 echo "Copying class files..."
 cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
