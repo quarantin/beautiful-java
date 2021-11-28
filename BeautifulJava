@@ -12,7 +12,7 @@ rm -rf "${OUTDIR}/zombie/"
 mkdir -p "${OUTDIR}"
 
 cd $(dirname "${0}")
-REPO="$(pwd)"
+REPO="$(dirname "${0}")"
 CONFIG="${REPO}/config.json"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
