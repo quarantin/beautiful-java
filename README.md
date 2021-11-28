@@ -16,8 +16,13 @@ You have to install the jq command. In case you don't have it already, it can be
 ## IntelliJ
 And you also have to install IntelliJ. BeautifulJava is using it for disassembling and formatting the code. It can be downloaded from here: https://www.jetbrains.com/idea/download/
 
+## Windows Users Only
+If you're running Windows, you'll have to install the following programs:
+- Notepad++. It can be downloaded from here: https://notepad-plus-plus.org/downloads/
+- Git Bash. It can be downloaded from here: https://gitforwindows.org/
+
 # Install
-Start a Bash interpreter, and run the following commands:
+Start a Bash interpreter or Git Bash, and run the following commands:
 
 	cd "${HOME}"
 	mkdir -p repos
@@ -25,10 +30,10 @@ Start a Bash interpreter, and run the following commands:
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
 
-# Configuration
 ## Linux
 	cp examples/config.json.linux.example config.json
 	vim config.json
+
 Update the content of config.json with this (update according to your setup):
 
 	{
