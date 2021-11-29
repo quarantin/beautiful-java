@@ -110,4 +110,7 @@ done < <(find "${OUTDIR}" -type f -name '*.java')
 
 
 echo "Indenting source files..."
-"${INTELLIJ}" format -r -s "${REPO}/formatter.xml" "${OUTDIR}"
+if [[ "${INTELLIJ}" != *"format.sh" ]]; then
+	FORMAT=format
+fi
+"${INTELLIJ}" ${FORMAT} -r -s "${REPO}/formatter.xml" "${OUTDIR}"
