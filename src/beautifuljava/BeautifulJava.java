@@ -25,7 +25,7 @@ public class BeautifulJava {
 	@SuppressWarnings("deprecation")
 	public BeautifulJava() {
 		Context context = new Context();
-		jcFileManager = new JavacFileManager(context, true, Charset.defaultCharset());
+		jcFileManager = new JavacFileManager(context, true, Charset.forName("UTF-8"));
 		jcTool = new JavacTool();
 	}
 
