@@ -45,6 +45,7 @@ Start a Bash interpreter and run the following commands:
 
 Before you can configure BeautifulJava, you have to find the path to Zomboid main executable. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties**, choose **LOCAL FILES**, then click **Browse...**. From there, depending on your operating system, you have to find a file named pzexe.jar (for Linux and MacOSX), or ProjectZomboid64.exe (for Windows). You have to copy the full path to the main executable.
 
+## Configuring BeautifulJava
 ### Configuration for Linux
 	cp examples/config.txt.linux.example config.txt
 	vim config.txt
