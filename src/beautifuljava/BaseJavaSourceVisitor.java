@@ -55,6 +55,10 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	}
 
 	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv) {
+		this(bjsv, "\t");
+	}
+
+	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv, String indent) {
 		this.indent = indent;
 		this.doDebug = false;
 		this.doOutput = true;
