@@ -50,7 +50,7 @@ Before you can configure BeautifulJava, you have to find the path to Zomboid mai
 	cp examples/config.txt.linux.example config.txt
 	vim config.txt
 
-Update config.txt according to your setup:
+Update **config.txt** according to your setup:
 
 	INTELLIJ=~/IntelliJ/bin/idea.sh
 	ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar
@@ -58,7 +58,7 @@ Update config.txt according to your setup:
 ### Configuration for Mac OSX
 	cp examples/config.txt.macosx.example config.txt
 	open -a TextEdit config.txt
-Update config.txt according to your setup:
+Update **config.txt** according to your setup:
 
 	INTELLIJ=/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh
 	ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/pzexe.jar
@@ -66,7 +66,7 @@ Update config.txt according to your setup:
 ### Configuration for Windows
 	cp examples/config.txt.windows.example config.txt
 	start notepad++ config.txt
-Update config.txt according to your setup:
+Update **config.txt** according to your setup:
 
 	INTELLIJ=C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe
 	ZOMBOID=C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe
