@@ -6,20 +6,31 @@ Once setup properly, when you run the script, it will do the following for you:
 - Decompile them using the Java decompiler from IntelliJ
 - Rename missing symbols (such as var1, var2, var3, etc), based on their type.
 
-# Dependencies
-## jq
-You'll have to install the jq command. In case you don't have it already, it can be downloaded from here: https://stedolan.github.io/jq/download/
+# Prerequisites
+
+## Zomboid
+You need to have Project Zomboid installed:
+
+https://projectzomboid.com/
 
 ## IntelliJ
-You'll also have to install IntelliJ. BeautifulJava is using it for disassembling and formatting the code. It can be downloaded from here: https://www.jetbrains.com/idea/download/
+You also have to install IntelliJ. BeautifulJava is using IntelliJ for disassembling and formatting the code. It can be downloaded from here:
 
-## Windows Users Only
-If you're running Windows, you'll have to install the following programs:
-- Notepad++. It can be downloaded from here: https://notepad-plus-plus.org/downloads/
-- Git Bash. It can be downloaded from here: https://gitforwindows.org/
+https://www.jetbrains.com/idea/download/
 
-# Install
-Start a Bash interpreter or Git Bash, and run the following commands:
+## Prerequisites for Linux
+[Follow these steps if you're using Linux](docs/LINUX.md)
+
+## Prerequisites for Mac OSX
+[Follow these steps if you're using Mac OSX](docs/MACOSX.md)
+
+## Prerequisites for Windows
+[Follow these steps if you're using Windows](docs/WINDOWS.md)
+
+# Installing BeautifulJava
+Once you've got Zomboid, IntelliJ, and the prerequisites for your operating system installed, you can proceed to installing BeautifulJava.
+
+Start a Bash interpreter and run the following commands:
 
 	cd "${HOME}"
 	mkdir -p repos
@@ -27,7 +38,7 @@ Start a Bash interpreter or Git Bash, and run the following commands:
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
 
-## Linux
+## Configuration for Linux
 	cp examples/config.json.linux.example config.json
 	vim config.json
 
@@ -38,7 +49,7 @@ Update the content of config.json with this (update according to your setup):
 		"zomboid": "~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar"
 	}
 
-## Mac OSX
+## Configuration for Mac OSX
 	cp examples/config.json.macosx.example config.json
 	open -a TextEdit config.json
 Update the content of config.json with this (update according to your setup):
@@ -48,7 +59,7 @@ Update the content of config.json with this (update according to your setup):
 		"zomboid": "~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/pzexe.jar"
 	}
 
-## Windows
+## Configuration for Windows
 	cp examples/config.json.windows.example config.json
 	start notepad++ config.json
 Update the config of config.json with this (update according to your setup):
@@ -58,16 +69,20 @@ Update the config of config.json with this (update according to your setup):
 		"zomboid": "C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe"
 	}
 
-# Updates
+# Updating BeautifulJava
 Updating BeautifulJava is done as follow:
 
 	cd "${HOME}/repos/beautiful-java/"
 	git pull
 
-# Usage
-Run the following command and wait for the script to finish:
+# Using BeautifulJava
+Run the following commands and wait for the script to finish:
 
+	cd "${HOME}/repos/beautiful-java/"
 	./BeautifulJava
-Once the script has finished, the source files should be available in the folder:
+Once the script has finished, the Java source files should be available in the folder:
 
 	${HOME}/repos/beautiful-java/sources/
+
+# Bugs
+Please report bugs [here](https://github.com/quarantin/beautiful-java/issues).
