@@ -11,7 +11,7 @@ if ! [ -z "${1}" ]; then
 fi
 
 if ! [ -f "${CONFIG}" ]; then
-	echo -e "${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#readme"
+	echo -e "${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
 	exit
 fi
 
