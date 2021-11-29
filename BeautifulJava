@@ -1,25 +1,35 @@
 #!/bin/bash
 set -e
+
 IFS="
 "
 
-JQ=$(which jq)
-if [ -z "${JQ}" ] || ! [ -f "${JQ}" ]; then
-	echo "You have to install jq. It can be downloaded from here: https://stedolan.github.io/jq/download/"
-	exit
+JQ="$(which jq)"
+if ! [ -f "${JQ}" ]; then
+	JQ="$(which jq-win64.exe)"
+	if ! [ -f "${JQ}" ]; then
+		echo "You have to install jq. It can be downloaded from here: https://stedolan.github.io/jq/download/"
+		exit
+	fi
 fi
 
 REPO="$(cd "$(dirname "${0}")"; pwd)"
 CONFIG="${REPO}/config.json"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
+fi
 
-elif ! [ -f "${CONFIG}" ]; then
-	echo -e "No config.json found.\nPlease copy config.json.example to config.json and edit the file according to your setup."
+if ! [ -f "${CONFIG}" ]; then
+	echo -e "${CONFIG} not found.\nPlease copy config.json.example to config.json and edit the file according to your setup."
 	exit
 fi
 
-INTELLIJ="$(jq -r .intellij "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+HASBACKSLASH="$(grep '\\' "${CONFIG}" | grep -v '/' || true)"
+if ! [ -z "${HASBACKSLASH}" ]; then
+	sed -ibak 's/\\/\//g' "${CONFIG}"
+fi
+
+INTELLIJ="$("${JQ}" -r .intellij "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if [ -z "${INTELLIJ}" ]; then
 	echo "ERROR: intellij path missing from config.json"
 	exit
@@ -29,7 +39,7 @@ elif ! [ -f "${INTELLIJ}" ]; then
 	exit
 fi
 
-JAVA="$(jq -r .java "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+JAVA="$("${JQ}" -r .java "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/bin/java"
 	if ! [ -f "${JAVA}" ]; then
@@ -41,7 +51,7 @@ if ! [ -f "${JAVA}" ]; then
 	fi
 fi
 
-ZOMBOID="$(jq -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+ZOMBOID="$("${JQ}" -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: zomboid path missing from config.json"
 	exit
