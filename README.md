@@ -9,7 +9,7 @@ Once setup properly, BeautifulJava will do the following for you:
 ## Prerequisites
 
 ### Zomboid
-Obviously, you need to have Project Zomboid installed:
+Obviously you need to have Project Zomboid installed:
 
 https://projectzomboid.com/
 
