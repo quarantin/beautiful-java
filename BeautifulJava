@@ -32,10 +32,12 @@ fi
 JAVA="$(jq -r .java "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/bin/java"
-	if ! [ -f ]; then
+	if ! [ -f "${JAVA}" ]; then
 		JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/Contents/Home/bin/java"
-		echo "ERROR: java interpreter not found."
-		exit
+		if ! [ -f "${JAVA}" ]; then
+			echo "ERROR: java interpreter not found."
+			exit
+		fi
 	fi
 fi
 
