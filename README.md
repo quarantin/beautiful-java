@@ -28,6 +28,7 @@ Install XCode: https://developer.apple.com/xcode/
 
 ### Prerequisites for Windows
 Install Git Bash: https://gitforwindows.org/
+
 Install Notepad++: https://notepad-plus-plus.org/downloads/
 
 ## Installing BeautifulJava
