@@ -14,9 +14,11 @@ You need to have Project Zomboid installed:
 https://projectzomboid.com/
 
 ### IntelliJ
-You also have to install IntelliJ. BeautifulJava is using IntelliJ for disassembling and formatting the code. It can be downloaded from here:
+You also have to install IntelliJ Community Edition. BeautifulJava is using IntelliJ for disassembling and formatting the code. It can be downloaded from here:
 
 https://www.jetbrains.com/idea/download/
+
+Remember the location where you install IntelliJ, you'll need it later.
 
 ### Prerequisites for Linux
 - Install Git:
@@ -40,6 +42,8 @@ Start a Bash interpreter and run the following commands:
 	cd repos
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
+
+Before you can configure BeautifulJava, you have to find the path to Zomboid main executable. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties**, choose **LOCAL FILES**, then click **Browse...**. From there, depending on your operating system, you have to find a file named pzexe.jar (for Linux and MacOSX), or ProjectZomboid64.exe (for Windows). You have to copy the full path to the main executable.
 
 ### Configuration for Linux
 	cp examples/config.txt.linux.example config.txt
