@@ -9,7 +9,7 @@ if [ -z "${JQ}" ] || ! [ -f "${JQ}" ]; then
 	exit
 fi
 
-REPO="$(realpath "$(dirname "${0}")")"
+REPO="$(cd "$(dirname "${0}")"; pwd)"
 CONFIG="${REPO}/config.json"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
