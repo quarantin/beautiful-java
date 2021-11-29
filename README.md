@@ -19,17 +19,16 @@ You also have to install IntelliJ. BeautifulJava is using IntelliJ for disassemb
 https://www.jetbrains.com/idea/download/
 
 ### Prerequisites for Linux
-Install Git:
+- Install Git:
 
-	sudo apt install git
+		sudo apt install git
 
 ### Prerequisites for Mac OSX
-Install XCode: https://developer.apple.com/xcode/
+- Install XCode: https://developer.apple.com/xcode/
 
 ### Prerequisites for Windows
-Install Git Bash: https://gitforwindows.org/
-
-Install Notepad++: https://notepad-plus-plus.org/downloads/
+- Install Git Bash: https://gitforwindows.org/
+- Install Notepad++: https://notepad-plus-plus.org/downloads/
 
 ## Installing BeautifulJava
 Once you've got Zomboid, IntelliJ, and the prerequisites for your operating system installed, you can proceed to installing BeautifulJava.
