@@ -78,15 +78,13 @@ cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
 
 
 echo "Decompiling class files..."
-cd "${OUTDIR}"
-"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . .
+"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}" "${OUTDIR}"
 
 
 echo "Deleting class files..."
 find "${OUTDIR}" -name '*.class' -exec rm -f {} \; > /dev/null
 
 echo "Restoring missing symbols..."
-cd "${OUTDIR}"
 while read FILE; do
 
 	echo "Fixing symbols ${FILE}"
@@ -109,5 +107,4 @@ done < <(find "${OUTDIR}" -type f -name '*.java')
 
 
 echo "Indenting source files..."
-cd "${OUTDIR}"
-"${INTELLIJ}" format -r -s "${REPO}/formatter.xml" .
+"${INTELLIJ}" format -r -s "${REPO}/formatter.xml" "${OUTDIR}"
