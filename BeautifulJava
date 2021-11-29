@@ -4,23 +4,14 @@ set -e
 IFS="
 "
 
-JQ="$(which jq)"
-if ! [ -f "${JQ}" ]; then
-	JQ="$(which jq-win64.exe)"
-	if ! [ -f "${JQ}" ]; then
-		echo "You have to install jq. It can be downloaded from here: https://stedolan.github.io/jq/download/"
-		exit
-	fi
-fi
-
 REPO="$(cd "$(dirname "${0}")"; pwd)"
-CONFIG="${REPO}/config.json"
+CONFIG="${REPO}/config.txt"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
 fi
 
 if ! [ -f "${CONFIG}" ]; then
-	echo -e "${CONFIG} not found.\nPlease copy config.json.example to config.json and edit the file according to your setup."
+	echo -e "${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#readme"
 	exit
 fi
 
@@ -29,17 +20,17 @@ if ! [ -z "${HASBACKSLASH}" ]; then
 	sed -ibak 's/\\/\//g' "${CONFIG}"
 fi
 
-INTELLIJ="$("${JQ}" -r .intellij "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+INTELLIJ="$(grep -i ^intellij "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if [ -z "${INTELLIJ}" ]; then
-	echo "ERROR: intellij path missing from config.json"
+	echo "ERROR: IntelliJ path missing from config.txt"
 	exit
 
 elif ! [ -f "${INTELLIJ}" ]; then
-	echo "ERROR: Path to IntelliJ is invalid: ${INTELLIJ}"
+	echo "ERROR: IntelliJ path is invalid: ${INTELLIJ}"
 	exit
 fi
 
-JAVA="$("${JQ}" -r .java "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+JAVA="$(grep -i ^java "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if ! [ -f "${JAVA}" ]; then
 	JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/bin/java"
 	if ! [ -f "${JAVA}" ]; then
@@ -51,9 +42,9 @@ if ! [ -f "${JAVA}" ]; then
 	fi
 fi
 
-ZOMBOID="$("${JQ}" -r .zomboid "${CONFIG}" | sed "s|^~|${HOME}|" | tr '\\' '/')"
+ZOMBOID="$(grep -i ^zomboid "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if [ -z "${ZOMBOID}" ]; then
-	echo "ERROR: zomboid path missing from config.json"
+	echo "ERROR: Zomboid path missing from config.txt"
 	exit
 
 elif ! [ -f "${ZOMBOID}" ]; then
