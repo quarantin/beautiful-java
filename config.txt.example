@@ -4,13 +4,13 @@
 ; https://github.com/quarantin/beautiful-java/#readme
 
 ; Linux
-;INTELLIJ=~/IntelliJ/bin/idea.sh
-;ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/
+;INTELLIJ=~/IntelliJ/
+;ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/
 
 ; MacOSX
-;INTELLIJ=/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh
-;ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/
+;INTELLIJ=/Applications/IntelliJ IDEA CE.app/
+;ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/
 
 ; Windows
-;INTELLIJ=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\bin\idea64.exe
+;INTELLIJ=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\
 ;ZOMBOID=C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\

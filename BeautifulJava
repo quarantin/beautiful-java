@@ -6,18 +6,90 @@ IFS="
 "
 
 config_error() {
+	echo "${1}"
 	echo
 	echo "Please follow configuration steps here:"
 	echo "https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
 	exit
 }
 
-if [ "$(uname -s)" = 'Darwin' ]; then
+find_path() {
+
+	PATTERN="${1}"
+	TARGET="${2}"
+	CHECK="${3}"
+
+	DIRPATH="$(grep -i "^${PATTERN}" "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
+
+	if [ -z "${DIRPATH}" ]; then
+		echo "ERROR: ${TARGET} path missing from config.txt"
+		return
+
+	elif ! [ -d "${DIRPATH}" ]; then
+		echo "ERROR: ${TARGET} path is invalid: ${DIRPATH}"
+		return
+	fi
+
+	if [ "${PATTERN}" = intellij ]; then
+		EXTRAS=("${INTELLIJ_EXTRA[@]}")
+
+	elif [ "${PATTERN}" = zomboid ]; then
+		EXTRAS=("${ZOMBOID_EXTRA[@]}")
+
+	else
+		echo "ERROR: This should never happen!"
+		return
+	fi
+
+	for EXTRA in "${EXTRAS[@]}"; do
+		if [ -f "${DIRPATH}/${EXTRA}/${CHECK}" ]; then
+			DIRPATH="${DIRPATH}/${EXTRA}"
+			break
+		fi
+	done
+
+	if ! [ -f "${DIRPATH}/${CHECK}" ]; then
+		echo "ERROR: ${TARGET} path is invalid: ${DIRPATH}"
+		return
+	fi
+
+	echo "${DIRPATH}"
+}
+
+#
+# OS specific
+#
+OS="$(uname -s)"
+if [ "${OS}" = 'Darwin' ]; then
 	BSDSED="''"
+	FORMATER=format.sh
+	INTELLIJ_EXTRA=(''
+		'Contents'
+	)
+	ZOMBOID_EXTRA=(''
+		'Project Zomboid.app'
+		'Project Zomboid.app/Contents'
+		'Project Zomboid.app/Contents/Java'
+	)
+elif [ "${OS}" = 'Linux' ]; then
+	FORMATER=idea.sh
+	FORMATER_ARG=format
+	INTELLIJ_EXTRA=()
+	ZOMBOID_EXTRA=(''
+		'projectzomboid'
+	)
 else
-	FORMAT=format
+	FORMATER=idea64.exe
+	FORMATER_ARG=format
+	INTELLIJ_EXTRA=()
+	ZOMBOID_EXTRA=()
+	OS="$(uname -o)"
 fi
 
+
+#
+# Looking for config.txt
+#
 REPO="$(cd "$(dirname "${0}")"; pwd)"
 CONFIG="${REPO}/config.txt"
 if ! [ -z "${1}" ]; then
@@ -25,11 +97,10 @@ if ! [ -z "${1}" ]; then
 fi
 
 if ! [ -f "${CONFIG}" ]; then
-	echo "ERROR: ${CONFIG} not found"
-	config_error
+	config_error "ERROR: ${CONFIG} not found"
 fi
 
-if [ "$(uname -o)" = 'Msys' ]; then
+if [ "${OS}" = 'Msys' ]; then
 	sed -i 's/\r//' "${CONFIG}"
 	HASBACKSLASH="$(grep -v '^;\|^$' "${CONFIG}" | grep '\\' || true)"
 	if ! [ -z "${HASBACKSLASH}" ]; then
@@ -37,56 +108,52 @@ if [ "$(uname -o)" = 'Msys' ]; then
 	fi
 fi
 
-INTELLIJ="$(grep -i ^intellij "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
-if [ -z "${INTELLIJ}" ]; then
-	echo "ERROR: IntelliJ path missing from config.txt"
-	config_error
 
-elif ! [ -f "${INTELLIJ}" ]; then
-	echo "ERROR: IntelliJ path is invalid: ${INTELLIJ}"
-	config_error
+#
+# Looking for IntelliJ install folder
+#
+INTELLIJ=$(find_path intellij IntelliJ bin/idea.svg)
+if ! [ -d "${INTELLIJ}" ]; then
+	config_error "${INTELLIJ}"
 fi
 
-ZOMBOID="$(grep -i ^zomboid "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
-if [ -z "${ZOMBOID}" ]; then
-	echo "ERROR: Zomboid path missing from config.txt"
-	config_error
-
-elif ! [ -d "${ZOMBOID}" ]; then
-	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
-	config_error
-
-elif ! [ -f "${ZOMBOID}/zombie/core/Core.class" ]; then
-	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
-	config_error
+#
+# Looking for Zomboid install folder
+#
+ZOMBOID=$(find_path zomboid Zomboid zombie/core/Core.class)
+if ! [ -d "${ZOMBOID}" ]; then
+	config_error "${ZOMBOID}"
 fi
 
+#
+# Looking for Java
+#
 JAVA="$(grep -i ^java "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if ! [ -f "${JAVA}" ]; then
-	JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/bin/java"
+	JAVA="${INTELLIJ}/jbr/bin/java"
 	if ! [ -f "${JAVA}" ]; then
-		JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/Contents/Home/bin/java"
+		JAVA="${INTELLIJ}/jbr/Contents/Home/bin/java"
 		if ! [ -f "${JAVA}" ]; then
 			echo "ERROR: java interpreter not found."
-			echo
-			exit
+			config_error
 		fi
 	fi
 fi
 
-DECOMPILER="$(dirname "$(dirname "${INTELLIJ}")")/plugins/java-decompiler/lib/java-decompiler.jar"
-MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
+
+#
+# Looking for Zomboid version
+#
+echo "* Retrieving Zomboid version..."
 OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
-
-
-echo "* Retrieving Zomboid version..."
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
-cd "${OUTDIR}"
-"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
-VERSION="$(grep -o 'new GameVersion(.*' Core.java | cut -f2 -d'(' | cut -f1,2 -d',' | sed 's/, /./')"
+DECOMPILER="${INTELLIJ}/plugins/java-decompiler/lib/java-decompiler.jar"
+MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
+"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}/Core.class" "${OUTDIR}" > /dev/null
+VERSION="$(grep -o 'new GameVersion(.*' "${OUTDIR}/Core.java" | cut -f2 -d'(' | cut -f1,2 -d',' | sed 's/, /./')"
 if [ -z "${VERSION}" ]; then
-	VERSION="$(grep 'versionNumber =' Core.java | cut -f2 -d= | cut -f2 -d'"')"
+	VERSION="$(grep 'versionNumber =' "${OUTDIR}/Core.java" | cut -f2 -d= | cut -f2 -d'"')"
 fi
 
 rm -f "${OUTDIR}/Core.class" "${OUTDIR}/Core.java"
@@ -101,7 +168,9 @@ else
 	mkdir -p "${OUTDIR}"
 fi
 
-
+#
+# Do the work
+#
 echo "* Copying class files..."
 cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
 
@@ -132,4 +201,4 @@ done < <(find "${OUTDIR}" -type f -name '*.java')
 
 
 echo "* Formating source files..."
-"${INTELLIJ}" ${FORMAT} -r -s "${REPO}/formatter.xml" "${OUTDIR}"
+"${INTELLIJ}/bin/${FORMATER}" ${FORMATER_ARG} -r -s "${REPO}/formatter.xml" "${OUTDIR}"
