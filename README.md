@@ -59,12 +59,6 @@ Edit **config.txt** according to your setup:
 	start notepad++ config.txt
 Edit **config.txt** according to your setup:
 
-## Updating BeautifulJava
-Updating BeautifulJava is done as follow:
-
-	cd "${HOME}/beautiful-java/"
-	git pull
-
 ## Using BeautifulJava
 Run the following commands and wait for the script to finish:
 
@@ -73,6 +67,12 @@ Run the following commands and wait for the script to finish:
 Once the script has finished, the Java source files should be available in this folder:
 
 	${HOME}/beautiful-java/sources/
+
+## Updating BeautifulJava
+Updating BeautifulJava is done as follow:
+
+	cd "${HOME}/beautiful-java/"
+	git pull
 
 ## Uninstalling BeautifulJava
 To uninstall BeautifulJava, simply delete beautiful-java folder:
