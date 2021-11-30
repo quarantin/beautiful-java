@@ -1,5 +1,8 @@
 package beautifuljava;
 
+import java.io.IOException;
+import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +34,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	};
 
 	protected String indent;
+	protected PrintStream out;
 	protected boolean doDebug;
 	protected boolean doOutput;
 	protected boolean doReplace;
@@ -40,11 +44,12 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	protected HashMap<String, HashMap<String, String>> rcallframes;
 	protected HashMap<String, HashMap<String, String>> utf8Literals;
 
-	public BaseJavaSourceVisitor() {
-		this("\t");
+	public BaseJavaSourceVisitor(PrintStream out) throws IOException {
+		this(out, "\t");
 	}
 
-	public BaseJavaSourceVisitor(String indent) {
+	public BaseJavaSourceVisitor(PrintStream out, String indent) throws IOException {
+		this.out = out;
 		this.indent = indent;
 		this.doDebug = false;
 		this.doOutput = true;
@@ -56,11 +61,12 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		this.utf8Literals = new HashMap<>();
 	}
 
-	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv) {
-		this(bjsv, "\t");
+	public BaseJavaSourceVisitor(PrintStream out, BaseJavaSourceVisitor bjsv) throws IOException {
+		this(out, bjsv, "\t");
 	}
 
-	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv, String indent) {
+	public BaseJavaSourceVisitor(PrintStream out, BaseJavaSourceVisitor bjsv, String indent) throws IOException {
+		this.out = out;
 		this.indent = indent;
 		this.doDebug = false;
 		this.doOutput = true;
@@ -222,12 +228,12 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 	protected void print(String string) {
 		if (doOutput)
-			System.out.print(string);
+			out.print(string);
 	}
 
 	protected void println(String string) {
 		if (doOutput)
-			System.out.println(string);
+			out.println(string);
 	}
 
 	public void debugStack(String stackName, Stack<String> stack) {

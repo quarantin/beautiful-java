@@ -1,8 +1,12 @@
 package beautifuljava;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+
 import java.nio.charset.Charset;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +47,7 @@ public class BeautifulJava {
 
 	public void parseJavaSourceFile(String sourcePath) {
 
+		File outputFile = new File(sourcePath.replace(".java", ".java.fixed"));
 		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
 
 		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
@@ -50,17 +55,20 @@ public class BeautifulJava {
 
 		try {
 
+			PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 			Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
 
-			VariableVisitor vv = new VariableVisitor();
+			VariableVisitor vv = new VariableVisitor(null);
 			for (CompilationUnitTree codeTree : codeResult) {
 				codeTree.accept(vv, "");
 			}
 
-			JavaSourceVisitor jsv = new JavaSourceVisitor(vv);
+			JavaSourceVisitor jsv = new JavaSourceVisitor(out, vv);
 			for (CompilationUnitTree codeTree : codeResult) {
 				codeTree.accept(jsv, "");
 			}
+
+			outputFile.renameTo(new File(sourcePath));
 		}
 		catch (IOException ioerror) {
 			ioerror.printStackTrace();

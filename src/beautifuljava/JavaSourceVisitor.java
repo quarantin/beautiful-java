@@ -1,5 +1,8 @@
 package beautifuljava;
 
+import java.io.IOException;
+import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +19,8 @@ import com.sun.source.tree.VariableTree;
 
 public class JavaSourceVisitor extends BaseJavaSourceVisitor {
 
-	public JavaSourceVisitor(VariableVisitor vv) {
-		super(vv);
+	public JavaSourceVisitor(PrintStream out, VariableVisitor vv) throws IOException {
+		super(out, vv);
 	}
 
 	private String getClassKeyword(ClassTree classTree) {

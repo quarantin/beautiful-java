@@ -1,5 +1,8 @@
 package beautifuljava;
 
+import java.io.IOException;
+import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +14,10 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 
 public class VariableVisitor extends BaseJavaSourceVisitor {
+
+	public VariableVisitor(PrintStream out) throws IOException {
+		super(out);
+	}
 
 	public void substitute(String oldName, String type) {
 
