@@ -1,8 +1,16 @@
 #!/bin/bash
 set -e
+echo
 
 IFS="
 "
+
+OS="$(uname -s)"
+if [ "${OS}" = 'Darwin' ]; then
+	BSDSED="''"
+else
+	FORMAT=format
+fi
 
 REPO="$(cd "$(dirname "${0}")"; pwd)"
 CONFIG="${REPO}/config.txt"
@@ -11,13 +19,13 @@ if ! [ -z "${1}" ]; then
 fi
 
 if ! [ -f "${CONFIG}" ]; then
-	echo -e "${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
+	echo -e "ERROR: ${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
 	exit
 fi
 
 HASBACKSLASH="$(grep '\\' "${CONFIG}" | grep -v '/' || true)"
 if ! [ -z "${HASBACKSLASH}" ]; then
-	sed -ibak 's/\\/\//g' "${CONFIG}"
+	sed -i ${BSDSED} 's/\\/\//g' "${CONFIG}"
 fi
 
 INTELLIJ="$(grep -i ^intellij "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
@@ -59,7 +67,7 @@ OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
 
 
-echo "Getting Zomboid version..."
+echo "* Getting Zomboid version..."
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
 cd "${OUTDIR}"
 "${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
@@ -69,31 +77,34 @@ if [ -z "${VERSION}" ]; then
 fi
 rm -f Core.class Core.java
 if [ -z "${VERSION}" ]; then
+	echo "* No version found."
 	rm -rf "${OUTDIR}/zombie/"
 else
+	echo "* Found version ${VERSION}"
 	OUTDIR="${OUTDIR}/${VERSION}"
 	rm -rf "${OUTDIR}/"
 	mkdir -p "${OUTDIR}"
 fi
 
 
-echo "Copying class files..."
+echo "* Copying class files..."
 cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
 
 
-echo "Decompiling class files..."
+echo "* Decompiling class files..."
 "${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}" "${OUTDIR}"
 
 
-echo "Deleting class files..."
+echo "* Deleting class files..."
 find "${OUTDIR}" -name '*.class' -exec rm -f {} \; > /dev/null
 
-echo "Restoring missing symbols..."
+
+echo "* Restoring missing symbols..."
 while read FILE; do
 
 	echo "Fixing symbols ${FILE}"
 
-	sed -ibak \
+	sed -i ${BSDSED} \
 		-e 's/<invokedynamic>//g' \
 		-e 's/(Object\[\])(\("ID",.*\)));/(Object[])new Object[]{\1});/g' \
 		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
@@ -105,8 +116,5 @@ while read FILE; do
 done < <(find "${OUTDIR}" -type f -name '*.java')
 
 
-echo "Indenting source files..."
-if [[ "${INTELLIJ}" != *"format.sh" ]]; then
-	FORMAT=format
-fi
+echo "* Formating source files..."
 "${INTELLIJ}" ${FORMAT} -r -s "${REPO}/formatter.xml" "${OUTDIR}"
