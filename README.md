@@ -73,6 +73,10 @@ Updating BeautifulJava is done as follow:
 
 	cd "${HOME}/beautiful-java/"
 	git pull
+In case you get an error with git, try the following commands:
+
+	git reset --hard origin/main
+	git pull
 
 ## Uninstalling BeautifulJava
 To uninstall BeautifulJava, simply delete beautiful-java folder:
