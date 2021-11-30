@@ -93,8 +93,6 @@ while read FILE; do
 
 	echo "Fixing symbols ${FILE}"
 
-	OUT="$(echo "${FILE}" | sed 's/\.java$/.clean.java/')"
-
 	sed -ibak \
 		-e 's/<invokedynamic>//g' \
 		-e 's/(Object\[\])(\("ID",.*\)));/(Object[])new Object[]{\1});/g' \
@@ -102,10 +100,7 @@ while read FILE; do
 		-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
 		"${FILE}"
 
-	"${JAVA}" -cp "${REPO}/classes" beautifuljava.BeautifulJava "${FILE}" > "${OUT}"
-	if [ "${?}" -eq "0" ]; then
-		mv "${OUT}" "${FILE}"
-	fi
+	"${JAVA}" -cp "${REPO}/classes" beautifuljava.BeautifulJava "${FILE}"
 
 done < <(find "${OUTDIR}" -type f -name '*.java')
 
