@@ -5,6 +5,13 @@ echo
 IFS="
 "
 
+config_error() {
+	echo
+	echo "Please follow configuration steps here:"
+	echo "https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
+	exit
+}
+
 if [ "$(uname -s)" = 'Darwin' ]; then
 	BSDSED="''"
 else
@@ -18,12 +25,13 @@ if ! [ -z "${1}" ]; then
 fi
 
 if ! [ -f "${CONFIG}" ]; then
-	echo -e "ERROR: ${CONFIG} not found.\nPlease follow the configuration steps here: https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
-	exit
+	echo "ERROR: ${CONFIG} not found"
+	config_error
 fi
 
 if [ "$(uname -o)" = 'Msys' ]; then
-	HASBACKSLASH="$(grep -v '^;\|^$' "${CONFIG}" | grep '\\' | true)"
+	sed -i 's/\r//' "${CONFIG}"
+	HASBACKSLASH="$(grep -v '^;\|^$' "${CONFIG}" | grep '\\' || true)"
 	if ! [ -z "${HASBACKSLASH}" ]; then
 		sed -i 's/\\/\//g' "${CONFIG}"
 	fi
@@ -32,11 +40,25 @@ fi
 INTELLIJ="$(grep -i ^intellij "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if [ -z "${INTELLIJ}" ]; then
 	echo "ERROR: IntelliJ path missing from config.txt"
-	exit
+	config_error
 
 elif ! [ -f "${INTELLIJ}" ]; then
 	echo "ERROR: IntelliJ path is invalid: ${INTELLIJ}"
-	exit
+	config_error
+fi
+
+ZOMBOID="$(grep -i ^zomboid "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
+if [ -z "${ZOMBOID}" ]; then
+	echo "ERROR: Zomboid path missing from config.txt"
+	config_error
+
+elif ! [ -d "${ZOMBOID}" ]; then
+	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
+	config_error
+
+elif ! [ -f "${ZOMBOID}/zombie/core/Core.class" ]; then
+	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
+	config_error
 fi
 
 JAVA="$(grep -i ^java "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
@@ -46,23 +68,10 @@ if ! [ -f "${JAVA}" ]; then
 		JAVA="$(dirname "$(dirname "${INTELLIJ}")")/jbr/Contents/Home/bin/java"
 		if ! [ -f "${JAVA}" ]; then
 			echo "ERROR: java interpreter not found."
+			echo
 			exit
 		fi
 	fi
-fi
-
-ZOMBOID="$(grep -i ^zomboid "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
-if [ -z "${ZOMBOID}" ]; then
-	echo "ERROR: Zomboid path missing from config.txt"
-	exit
-
-elif ! [ -d "${ZOMBOID}" ]; then
-	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
-	exit
-
-elif ! [ -f "${ZOMBOID}/zombie/core/Core.class" ]; then
-	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
-	exit
 fi
 
 DECOMPILER="$(dirname "$(dirname "${INTELLIJ}")")/plugins/java-decompiler/lib/java-decompiler.jar"
@@ -79,7 +88,9 @@ VERSION="$(grep -o 'new GameVersion(.*' Core.java | cut -f2 -d'(' | cut -f1,2 -d
 if [ -z "${VERSION}" ]; then
 	VERSION="$(grep 'versionNumber =' Core.java | cut -f2 -d= | cut -f2 -d'"')"
 fi
-rm -f Core.class Core.java
+
+rm -f "${OUTDIR}/Core.class" "${OUTDIR}/Core.java"
+
 if [ -z "${VERSION}" ]; then
 	echo "* No version found."
 	rm -rf "${OUTDIR}/zombie/"

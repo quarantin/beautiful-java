@@ -38,53 +38,47 @@ Once you've got Zomboid, IntelliJ, and the prerequisites for your operating syst
 Start a Bash interpreter and run the following commands:
 
 	cd "${HOME}"
-	mkdir -p repos
-	cd repos
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
 
-Before you can configure BeautifulJava, you have to find the path to Zomboid install folder. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties**, choose **LOCAL FILES**, then click **Browse...**. Copy-paste the path.
-
 ## Configuring BeautifulJava
-### Configuration for Linux
-	cp examples/config.txt.linux.example config.txt
-	vim config.txt
+Before you can configure BeautifulJava, you have to find the path to Zomboid install folder. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties...**, choose **LOCAL FILES**, then click **Browse...**.
 
+### Configuration for Linux
+	cp config.txt.example config.txt
+	vim config.txt
 Edit **config.txt** according to your setup:
 
-	INTELLIJ=~/IntelliJ/bin/idea.sh
-	ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/
-
 ### Configuration for Mac OSX
-	cp examples/config.txt.macosx.example config.txt
+	cp config.txt.example config.txt
 	open -a TextEdit config.txt
 Edit **config.txt** according to your setup:
 
-	INTELLIJ=/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh
-	ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/
-
 ### Configuration for Windows
-	cp examples/config.txt.windows.example config.txt
+	cp config.txt.example config.txt
 	start notepad++ config.txt
 Edit **config.txt** according to your setup:
-
-	INTELLIJ=C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe
-	ZOMBOID=C:/SteamLibrary/steamapps/common/ProjectZomboid/
 
 ## Updating BeautifulJava
 Updating BeautifulJava is done as follow:
 
-	cd "${HOME}/repos/beautiful-java/"
+	cd "${HOME}/beautiful-java/"
 	git pull
 
 ## Using BeautifulJava
 Run the following commands and wait for the script to finish:
 
-	cd "${HOME}/repos/beautiful-java/"
+	cd "${HOME}/beautiful-java/"
 	./BeautifulJava
-Once the script has finished, the Java source files should be available in the folder:
+Once the script has finished, the Java source files should be available in this folder:
 
-	${HOME}/repos/beautiful-java/sources/
+	${HOME}/beautiful-java/sources/
+
+## Uninstalling BeautifulJava
+To uninstall BeautifulJava, simply delete beautiful-java folder:
+
+	cd "${HOME}"
+	rm -rf beautiful-java
 
 ## Bugs
 Please report bugs [here](https://github.com/quarantin/beautiful-java/issues).

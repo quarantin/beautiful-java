@@ -1,0 +1,16 @@
+; To configure BeautifulJava, identify the section for your operating system and
+; remove the leading ";" character for lines starting with INTELLIJ and ZOMBOID.
+; Please ensure both paths are correct. For more information, visit this link:
+; https://github.com/quarantin/beautiful-java/#readme
+
+; Linux
+;INTELLIJ=~/IntelliJ/bin/idea.sh
+;ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/
+
+; MacOSX
+;INTELLIJ=/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh
+;ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/
+
+; Windows
+;INTELLIJ=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\bin\idea64.exe
+;ZOMBOID=C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\
