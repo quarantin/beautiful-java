@@ -40,8 +40,8 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	protected boolean doReplace;
 	protected Stack<String> classStack;
 	protected Stack<String> methodStack;
-	protected HashMap<String, HashMap<String, String>> callframes;
-	protected HashMap<String, HashMap<String, String>> rcallframes;
+	protected HashMap<String, HashMap<String, String>> envs;
+	protected HashMap<String, HashMap<String, String>> renvs;
 	protected HashMap<String, HashMap<String, String>> utf8Literals;
 
 	public BaseJavaSourceVisitor(PrintStream out) throws IOException {
@@ -56,8 +56,8 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		this.doReplace = true;
 		this.classStack = new Stack<>();
 		this.methodStack = new Stack<>();
-		this.callframes = new HashMap<>();
-		this.rcallframes = new HashMap<>();
+		this.envs = new HashMap<>();
+		this.renvs = new HashMap<>();
 		this.utf8Literals = new HashMap<>();
 	}
 
@@ -75,8 +75,8 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		this.doReplace = bjsv.doReplace;
 		this.classStack = bjsv.classStack;
 		this.methodStack = bjsv.methodStack;
-		this.callframes = bjsv.callframes;
-		this.rcallframes = bjsv.rcallframes;
+		this.envs = bjsv.envs;
+		this.renvs = bjsv.renvs;
 		this.utf8Literals = bjsv.utf8Literals;
 	}
 
@@ -151,7 +151,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 		System.err.println("===================");
 
-		env = callframes.get(envKey);
+		env = envs.get(envKey);
 		if (env == null) {
 			System.err.println("Env is null");
 			return;
@@ -187,7 +187,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 			debugCallframe();
 
 		String envKey = getEnvKey();
-		HashMap<String, String> env = callframes.get(envKey);
+		HashMap<String, String> env = envs.get(envKey);
 		HashMap<String, String> utf8Map = utf8Literals.get(envKey);
 
 		if (env != null) {
@@ -253,25 +253,25 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 	public String getenv(String symbol) {
 		String envKey = getEnvKey();
-		HashMap<String, String> env = callframes.get(envKey);
+		HashMap<String, String> env = envs.get(envKey);
 		return env == null ? null : env.get(symbol);
 	}
 
 	public String rgetenv(String symbol) {
 		String envKey = getEnvKey();
-		HashMap<String, String> renv = rcallframes.get(envKey);
+		HashMap<String, String> renv = renvs.get(envKey);
 		return renv == null ? null : renv.get(symbol);
 	}
 
 	public void setenv(String oldSymbol, String newSymbol) {
 		String envKey = getEnvKey();
-		HashMap<String, String> env = callframes.get(envKey);
-		HashMap<String, String> renv = rcallframes.get(envKey);
+		HashMap<String, String> env = envs.get(envKey);
+		HashMap<String, String> renv = renvs.get(envKey);
 		if (env == null) {
 			env = new HashMap<>();
 			renv = new HashMap<>();
-			callframes.put(envKey, env);
-			rcallframes.put(envKey, renv);
+			envs.put(envKey, env);
+			renvs.put(envKey, renv);
 		}
 
 		env.put(oldSymbol, newSymbol);
