@@ -55,12 +55,15 @@ if [ -z "${ZOMBOID}" ]; then
 	echo "ERROR: Zomboid path missing from config.txt"
 	exit
 
-elif ! [ -f "${ZOMBOID}" ]; then
+elif ! [ -d "${ZOMBOID}" ]; then
+	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
+	exit
+
+elif ! [ -f "${ZOMBOID}/zombie/core/Core.class" ]; then
 	echo "ERROR: Path to Zomboid is invalid: ${ZOMBOID}"
 	exit
 fi
 
-ZOMBOID="$(dirname "${ZOMBOID}")"
 DECOMPILER="$(dirname "$(dirname "${INTELLIJ}")")/plugins/java-decompiler/lib/java-decompiler.jar"
 MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
 OUTDIR="$(pwd)/sources"

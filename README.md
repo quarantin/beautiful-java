@@ -43,7 +43,7 @@ Start a Bash interpreter and run the following commands:
 	git clone https://github.com/quarantin/beautiful-java
 	cd beautiful-java
 
-Before you can configure BeautifulJava, you have to find the path to Zomboid main executable. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties**, choose **LOCAL FILES**, then click **Browse...**. From there, depending on your operating system, you have to find a file named pzexe.jar (for Linux and MacOSX), or ProjectZomboid64.exe (for Windows). You have to copy the full path to the main executable.
+Before you can configure BeautifulJava, you have to find the path to Zomboid install folder. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties**, choose **LOCAL FILES**, then click **Browse...**. Copy-paste the path.
 
 ## Configuring BeautifulJava
 ### Configuration for Linux
@@ -53,7 +53,7 @@ Before you can configure BeautifulJava, you have to find the path to Zomboid mai
 Edit **config.txt** according to your setup:
 
 	INTELLIJ=~/IntelliJ/bin/idea.sh
-	ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/pzexe.jar
+	ZOMBOID=~/.steam/steam/steamapps/common/ProjectZomboid/projectzomboid/
 
 ### Configuration for Mac OSX
 	cp examples/config.txt.macosx.example config.txt
@@ -61,7 +61,7 @@ Edit **config.txt** according to your setup:
 Edit **config.txt** according to your setup:
 
 	INTELLIJ=/Applications/IntelliJ IDEA CE.app/Contents/bin/format.sh
-	ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/pzexe.jar
+	ZOMBOID=~/Library/Application Support/Steam/steamapps/common/ProjectZomboid/Project Zomboid.app/Contents/Java/
 
 ### Configuration for Windows
 	cp examples/config.txt.windows.example config.txt
@@ -69,7 +69,7 @@ Edit **config.txt** according to your setup:
 Edit **config.txt** according to your setup:
 
 	INTELLIJ=C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.2.3/bin/idea64.exe
-	ZOMBOID=C:/SteamLibrary/steamapps/common/ProjectZomboid/ProjectZomboid64.exe
+	ZOMBOID=C:/SteamLibrary/steamapps/common/ProjectZomboid/
 
 ## Updating BeautifulJava
 Updating BeautifulJava is done as follow:
