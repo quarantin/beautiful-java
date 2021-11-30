@@ -1,0 +1,17 @@
+#!/bin/bash
+
+OLD="${1}"
+NEW="${2}"
+PATCH="${3}"
+
+if [ -z "${OLD}" ] || [ -z "${NEW}" ] || [ -z "${PATCH}" ] || ! [ -d "${OLD}" ] || ! [ -d "${NEW}" ]; then
+	echo
+	echo "Usage: ${0} <old> <new> <output>"
+	echo
+	echo "Example:"
+	echo "	${0} ./sources/40.43 ./sources/41.56 patch-40.43_41.56.diff"
+	echo
+	exit
+fi
+
+diff -bBNpruw "${OLD}" "${NEW}" > "${PATCH}"
