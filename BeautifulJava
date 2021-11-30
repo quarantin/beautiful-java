@@ -71,7 +71,7 @@ OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
 
 
-echo "* Getting Zomboid version..."
+echo "* Retrieving Zomboid version..."
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
 cd "${OUTDIR}"
 "${JAVA}" -cp "${DECOMPILER}" "${MAIN}" . . > /dev/null
