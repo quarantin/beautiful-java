@@ -68,6 +68,7 @@ public class BeautifulJava {
 				codeTree.accept(jsv, "");
 			}
 
+			out.close();
 			outputFile.renameTo(new File(sourcePath));
 		}
 		catch (IOException ioerror) {
