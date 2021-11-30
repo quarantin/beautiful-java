@@ -5,8 +5,7 @@ echo
 IFS="
 "
 
-OS="$(uname -s)"
-if [ "${OS}" = 'Darwin' ]; then
+if [ "$(uname -s)" = 'Darwin' ]; then
 	BSDSED="''"
 else
 	FORMAT=format
@@ -23,9 +22,11 @@ if ! [ -f "${CONFIG}" ]; then
 	exit
 fi
 
-HASBACKSLASH="$(grep '\\' "${CONFIG}" | grep -v '/' || true)"
-if ! [ -z "${HASBACKSLASH}" ]; then
-	sed -i ${BSDSED} 's/\\/\//g' "${CONFIG}"
+if [ "$(uname -o)" = 'Msys' ]; then
+	HASBACKSLASH="$(grep -v '^;\|^$' "${CONFIG}" | grep '\\' | true)"
+	if ! [ -z "${HASBACKSLASH}" ]; then
+		sed -i 's/\\/\//g' "${CONFIG}"
+	fi
 fi
 
 INTELLIJ="$(grep -i ^intellij "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
