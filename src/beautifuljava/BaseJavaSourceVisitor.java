@@ -94,7 +94,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	private boolean isPrimitiveType(String type) {
 
 		for (int i = 0; i < primitiveTypes.length; i++)
-			if (type.equals(primitiveTypes[i]))
+			if (type.toLowerCase().equals(primitiveTypes[i]))
 				return true;
 
 		return false;
