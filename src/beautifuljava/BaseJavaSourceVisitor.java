@@ -38,6 +38,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 	protected Stack<String> methodStack;
 	protected HashMap<String, HashMap<String, String>> callframes;
 	protected HashMap<String, HashMap<String, String>> rcallframes;
+	protected HashMap<String, HashMap<String, String>> utf8Literals;
 
 	public BaseJavaSourceVisitor() {
 		this("\t");
@@ -52,6 +53,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		this.methodStack = new Stack<>();
 		this.callframes = new HashMap<>();
 		this.rcallframes = new HashMap<>();
+		this.utf8Literals = new HashMap<>();
 	}
 
 	public BaseJavaSourceVisitor(BaseJavaSourceVisitor bjsv) {
@@ -69,6 +71,7 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		this.methodStack = bjsv.methodStack;
 		this.callframes = bjsv.callframes;
 		this.rcallframes = bjsv.rcallframes;
+		this.utf8Literals = bjsv.utf8Literals;
 	}
 
 	public String getEnvKey() {
@@ -177,28 +180,37 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		if (doDebug)
 			debugCallframe();
 
-		HashMap<String, String> env = callframes.get(getEnvKey());
-		if (env == null) {
-			return output;
+		String envKey = getEnvKey();
+		HashMap<String, String> env = callframes.get(envKey);
+		HashMap<String, String> utf8Map = utf8Literals.get(envKey);
+
+		if (env != null) {
+			ArrayList<String> keySet = new ArrayList<>(env.keySet());
+
+			Collections.sort(keySet, new Comparator<String>() {
+				public int compare(String s1, String s2) {
+					int i1 = Integer.parseInt(s1.substring(3));
+					int i2 = Integer.parseInt(s2.substring(3));
+					return i2 - i1;
+				}
+			});
+
+			for (String oldSymbol : keySet) {
+				String newSymbol = env.get(oldSymbol);
+
+				if (!canReplace(newSymbol, output))
+					throw new RuntimeException("ERROR: Can't replace " + oldSymbol + " with " + newSymbol + "\nmethod:\n" + output);
+
+				output = output.replace(oldSymbol, newSymbol);
+			}
 		}
 
-		ArrayList<String> keySet = new ArrayList<>(env.keySet());
+		if (utf8Map != null) {
 
-		Collections.sort(keySet, new Comparator<String>() {
-			public int compare(String s1, String s2) {
-				int i1 = Integer.parseInt(s1.substring(3));
-				int i2 = Integer.parseInt(s2.substring(3));
-				return i2 - i1;
+			for (String ascii : utf8Map.keySet()) {
+				String utf8 = utf8Map.get(ascii);
+				output = output.replace(ascii, utf8);
 			}
-		});
-
-		for (String oldSymbol : keySet) {
-			String newSymbol = env.get(oldSymbol);
-
-			if (!canReplace(newSymbol, output))
-				throw new RuntimeException("ERROR: Can't replace " + oldSymbol + " with " + newSymbol + "\nmethod:\n" + output);
-
-			output = output.replace(oldSymbol, newSymbol);
 		}
 
 		return output;

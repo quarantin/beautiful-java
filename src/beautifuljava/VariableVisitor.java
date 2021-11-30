@@ -1,9 +1,12 @@
 package beautifuljava;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 
@@ -69,4 +72,29 @@ public class VariableVisitor extends BaseJavaSourceVisitor {
 		substitute(symbol, type);
 		return super.visitVariable(variableTree, indent);
 	}
+
+	@Override
+	public String visitLiteral(LiteralTree literalTree, String indent) {
+
+		if (!literalTree.getKind().equals(Tree.Kind.CHAR_LITERAL))
+			return super.visitLiteral(literalTree, indent);
+
+		String ascii = literalTree.toString();
+		if (!ascii.startsWith("'\\u"))
+			return super.visitLiteral(literalTree, indent);
+
+		String envKey = getEnvKey();
+		HashMap<String, String> utf8Map = utf8Literals.get(envKey);
+		if (utf8Map == null) {
+			utf8Map = new HashMap<>();
+			utf8Literals.put(envKey, utf8Map);
+		}
+
+		String codepointString = ascii.replace("\\u", "").replace("'", "");
+		int codepoint = Integer.parseInt(codepointString, 16);
+		String utf8 = "'" + new String(Character.toChars(codepoint)) + "'";
+		utf8Map.put(ascii, utf8);
+		return super.visitLiteral(literalTree, indent);
+	}
+
 }
