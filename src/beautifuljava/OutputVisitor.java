@@ -82,8 +82,9 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		}
 
 		String implementsClause = obj2str(classTree.getImplementsClause());
+		String implementsKeyword = classTree.getKind().equals(Tree.Kind.INTERFACE) ? "extends" : "implements";
 		if (!implementsClause.equals("")) {
-			output += " implements " + implementsClause;
+			output += " " + implementsKeyword + " " + implementsClause;
 		}
 
 		output += " {" + this.nl;
