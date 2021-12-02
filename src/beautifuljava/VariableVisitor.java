@@ -20,10 +20,16 @@ public class VariableVisitor extends BaseJavaSourceVisitor {
 		String newName = oldName;
 
 		// TODO: Don't ignore lambda variables, var1x, var2x, etc
+
 		if (oldName.startsWith("var") && !oldName.endsWith("x")) {
-			newName = getenv(oldName);
-			if (newName == null)
-				newName = getNewName(oldName, type);
+			try {
+				int test = Integer.parseInt(oldName.substring(3));
+
+				newName = getenv(oldName);
+				if (newName == null)
+					newName = getNewName(oldName, type);
+			}
+			catch (Exception error) {}
 		}
 
 		if (!oldName.equals(newName))
