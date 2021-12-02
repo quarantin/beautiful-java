@@ -201,7 +201,13 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 				type = type.substring(index + 1);
 
 			if (type.equals("Class"))
-				type = "Clazz";
+				type = "JavaClass";
+
+			else if (type.equals("Package"))
+				type = "JavaPackage";
+
+			else if (type.equals("Void"))
+				type = "JavaVoid";
 
 			else if (type.startsWith("Iso"))
 				type = type.substring(3);
