@@ -200,11 +200,17 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 			if (index > -1)
 				type = type.substring(index + 1);
 
-			if (type.startsWith("Iso"))
+			if (type.equals("Class"))
+				type = "Clazz";
+
+			else if (type.startsWith("Iso"))
 				type = type.substring(3);
 
 			else if (type.startsWith("IO"))
 				type = "io" + type.substring(2);
+
+			else if (type.startsWith("URL"))
+				type = "url" + type.substring(3);
 
 			type = type.substring(0, 1).toLowerCase() + type.substring(1);
 		}
