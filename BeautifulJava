@@ -169,11 +169,11 @@ rm -f "${OUTDIR}/Core.class" "${OUTDIR}/Core.java"
 
 if [ -z "${VERSION}" ]; then
 	echo "* No version found."
-	rm -rf "${OUTDIR}/zombie/"
+	rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
 else
 	echo "* Found version ${VERSION}"
 	OUTDIR="${OUTDIR}/${VERSION}"
-	rm -rf "${OUTDIR}/"
+	rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
 	mkdir -p "${OUTDIR}"
 fi
 
@@ -182,7 +182,7 @@ fi
 # Copy all class files to target folder
 #
 echo "* Copying class files..."
-cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
+cp -r "${ZOMBOID}/"{com,de,fmod,javax,org,se,sun,zombie} "${OUTDIR}"
 
 
 #
