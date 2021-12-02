@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd "$(dirname ${0})"
+cd ..
+
+for VERSION in $(ls -1 sources); do
+
+	SOURCES="sources/${VERSION}"
+	OUTDIR="javadoc/${VERSION}"
+
+	rm -rf "${OUTDIR}"
+	mkdir -p "${OUTDIR}"
+
+	PACKAGES=$(grep --binary-files=text -R ^package "${SOURCES}" | cut -f 2 -d: | sed -e 's/^package //' -e 's/;$//' | sort -u | tr '\n' ' ')
+	javadoc -source 8 -Xdoclint:-missing -cp './zlib/*' -d "${OUTDIR}" --source-path "${SOURCES}/" ${PACKAGES}
+done
