@@ -1,4 +1,5 @@
 zombie/ai/states/SwipeStatePlayer.java
 zombie/characters/IsoPlayer.java
 zombie/network/GameServer.java
+zombie/scripting/commands/Lua/LuaCall.java
 zombie/Lua/LuaManager.java
