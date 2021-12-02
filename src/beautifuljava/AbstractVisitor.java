@@ -209,6 +209,12 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 			else if (type.equals("Void"))
 				type = "JavaVoid";
 
+			else if (type.indexOf('|') > -1)
+				type = "Error";
+
+			else if (type.equals("IsoGridSquare"))
+				type = type.substring(7);
+
 			else if (type.startsWith("Iso"))
 				type = type.substring(3);
 
