@@ -99,10 +99,6 @@ fi
 #
 REPO="$(cd "$(dirname "${0}")"; pwd ${PWDOPT})"
 CONFIG="${REPO}/config.txt"
-if ! [ -z "${1}" ]; then
-	CONFIG="${1}"
-fi
-
 if ! [ -f "${CONFIG}" ]; then
 	config_error "ERROR: ${CONFIG} not found"
 fi
@@ -205,7 +201,6 @@ echo "* Decompiling class files..."
 #
 # Fix invalid Java syntax
 #
-echo
 sed -i ${BSDSED} \
 	-e 's/return yield(/return this.yield(/' \
 	"${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
@@ -227,8 +222,9 @@ sed -i ${BSDSED} \
 #
 # Run BeautifulJava
 #
-echo "* Restoring missing symbols..."
-"${JAVA}" -cp "${REPO}/classes${PATHSEP}${REPO}/lib/*" beautifuljava.BeautifulJava ${LINEFEED} "${OUTDIR}"
+echo
+echo "* Fixing symbols..."
+"${JAVA}" -cp "${REPO}/classes${PATHSEP}${REPO}/lib/*" beautifuljava.BeautifulJava ${LINEFEED} "${OUTDIR}" ${@}
 
 sed -i ${BSDSED} 's/@LuaMethod(name = "\([^"]\+\)")/@LuaMethod(name = "\1", global = true)/' "${OUTDIR}/zombie/iso/IsoCell.java"
 
