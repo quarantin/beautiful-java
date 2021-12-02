@@ -86,6 +86,7 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		symbols = symbolsDB.get(envKey);
 		if (symbols != null) {
 
+			Collections.sort(symbols);
 			for (Symbol symbol : symbols) {
 
 				if (symbol.newName == null)
