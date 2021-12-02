@@ -203,15 +203,26 @@ echo "* Decompiling class files..."
 #
 # Fix invalid Java syntax
 #
-sed -i ${BSDSED} \
-	-e 's/return yield(/return this.yield(/' \
-	"${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
+
+FILE="${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
+if [ -f "${FILE}" ]; then
+	sed -i ${BSDSED} \
+		-e 's/return yield(/return this.yield(/' \
+		"${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
+fi
 
 sed -i ${BSDSED} \
 	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
 	"${OUTDIR}/zombie/Lua/LuaManager.java" \
-	"${OUTDIR}/zombie/network/GameServer.java" \
-	"${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java" # 40.43
+	"${OUTDIR}/zombie/network/GameServer.java"
+
+# <= 40.43
+FILE="${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java"
+if  [ -f "${FILE}" ]; then
+	sed -i ${BSDSED} \
+		-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
+		"${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java"
+fi
 
 sed -i ${BSDSED} \
 	-e 's|\((float)var[0-9]* \* (1.0F - (float)var[0-9]*\.getPerkLevel(PerkFactory\.Perks\.Aiming) / 15\.0F);\)$|// \1|' \
