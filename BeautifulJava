@@ -206,21 +206,22 @@ echo "* Decompiling class files..."
 # Fix invalid Java syntax
 #
 echo
-while read FILE; do
+sed -i ${BSDSED} \
+	-e 's/return yield(/return this.yield(/' \
+	"${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
 
-	if [ -f "${OUTDIR}/${FILE}" ]; then
+sed -i ${BSDSED} \
+	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
+	"${OUTDIR}/zombie/Lua/LuaManager.java" \
+	"${OUTDIR}/zombie/network/GameServer.java"
 
-		sed -i ${BSDSED} \
-			-e 's/<invokedynamic>//g' \
-			-e 's/return yield(/return this.yield(/g' \
-			-e 's/(Object\[\])()/(Object[])new Object[]{}/' \
-			-e 's/(Object\[\])(\(.*\)));$/(Object[])new Object[]{\1});/' \
-			-e 's/(Object\[\])(\(.*\)))\[1\];/(Object[])new Object[]{\1})[1];/' \
-			-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
-			"${OUTDIR}/${FILE}"
-	fi
+sed -i ${BSDSED} \
+	-e 's|\((float)var[0-9]* \* (1.0F - (float)var[0-9]*\.getPerkLevel(PerkFactory\.Perks\.Aiming) / 15\.0F);\)$|// \1|' \
+	"${OUTDIR}/zombie/ai/states/SwipeStatePlayer.java"
 
-done < "${REPO}/bad-files.txt"
+sed -i ${BSDSED} \
+	-e 's|<invokedynamic>|/* <invokedynamic> */|' \
+	"${OUTDIR}/zombie/characters/IsoPlayer.java"
 
 
 #
