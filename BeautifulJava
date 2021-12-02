@@ -155,7 +155,8 @@ fi
 #
 echo "* Checking Zomboid version..."
 OUTDIR="$(pwd)/sources"
-mkdir -p "${OUTDIR}"
+OUTLIB="$(pwd)/zlib"
+mkdir -p "${OUTDIR}" "${OUTLIB}"
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
 DECOMPILER="${INTELLIJ}/plugins/java-decompiler/lib/java-decompiler.jar"
 MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
@@ -169,13 +170,14 @@ rm -f "${OUTDIR}/Core.class" "${OUTDIR}/Core.java"
 
 if [ -z "${VERSION}" ]; then
 	echo "* No version found."
-	rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
 else
 	echo "* Found version ${VERSION}"
 	OUTDIR="${OUTDIR}/${VERSION}"
-	rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
-	mkdir -p "${OUTDIR}"
+	OUTLIB="${OUTLIB}/${VERSION}"
 fi
+
+rm -f "${OUTLIB}/"*
+rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
 
 
 #
@@ -183,7 +185,7 @@ fi
 #
 echo "* Copying class files..."
 cp -r "${ZOMBOID}/"{com,de,fmod,javax,org,se,sun,zombie} "${OUTDIR}"
-
+cp "${ZOMBOID}/"*.jar "${OUTLIB}"
 
 #
 # Run IntelliJ decompiler
