@@ -24,4 +24,4 @@ rm -rf "${OUTDIR}"
 mkdir -p "${OUTDIR}"
 
 PACKAGES=$(grep --binary-files=text -R ^package "${SOURCES}" | cut -f 2 -d: | sed -e 's/^package //' -e 's/;$//' | sort -u | tr '\n' ' ')
-javadoc -source 8 -Xdoclint:none -cp "zlib/${VERSION}${SEP}zlib/${VERSION}/*" -d "${OUTDIR}" --source-path "${SOURCES}/" ${PACKAGES}
+javadoc -source 8 -encoding utf8 -Xdoclint:none -cp "zlib/${VERSION}${SEP}zlib/${VERSION}/*" -d "${OUTDIR}" --source-path "${SOURCES}/" ${PACKAGES}
