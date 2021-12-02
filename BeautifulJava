@@ -178,7 +178,7 @@ fi
 
 rm -f "${OUTLIB}/"*
 rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
-mkdir -p "${OUTDIR}"
+mkdir -p "${OUTDIR}" "${OUTLIB}"
 
 #
 # Copy all class files to target folder
