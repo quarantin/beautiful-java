@@ -1,6 +1,6 @@
 package beautifuljava;
 
-public class Symbol {
+public class Symbol implements Comparable<Symbol> {
 
 	public int index;
 	public String type;
@@ -19,6 +19,12 @@ public class Symbol {
 		this.type = type;
 		this.oldName = oldName;
 		this.newName = newName;
+	}
+
+	public int compareTo(Symbol symbol) {
+		int i1 = Integer.parseInt(this.oldName.substring(3));
+		int i2 = Integer.parseInt(symbol.oldName.substring(3));
+		return i2 - i1;
 	}
 
 	public String toString() {
