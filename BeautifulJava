@@ -202,6 +202,7 @@ while read FILE; do
 
 		sed -i ${BSDSED} \
 			-e 's/<invokedynamic>//g' \
+			-e 's/(Object\[\])()/(Object[])new Object[]{}/' \
 			-e 's/(Object\[\])(\(.*\)));$/(Object[])new Object[]{\1});/' \
 			-e 's/(Object\[\])(\(.*\)))\[1\];/(Object[])new Object[]{\1})[1];/' \
 			-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
