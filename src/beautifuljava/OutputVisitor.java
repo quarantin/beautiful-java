@@ -227,6 +227,10 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		output += String.join(", ", throwsList);
 
+		Tree defaultValue = methodTree.getDefaultValue();
+		if (defaultValue != null)
+			output += " default " + defaultValue;
+
 		BlockTree blockTree = methodTree.getBody();
 		if (blockTree == null)
 			output += ";";
