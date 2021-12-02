@@ -10,6 +10,13 @@ if [ -z "${VERSION}" ]; then
 	exit
 fi
 
+OS="$(uname -s)"
+if [ "${OS}" = "Darwin"] || [ "${OS}" = "Linux" ]; then
+	SEP=':'
+elif [ "$(uname -o)" = 'Msys' ]; then
+	SEP=';'
+fi
+
 SOURCES="sources/${VERSION}"
 OUTDIR="javadoc/${VERSION}"
 
@@ -17,4 +24,4 @@ rm -rf "${OUTDIR}"
 mkdir -p "${OUTDIR}"
 
 PACKAGES=$(grep --binary-files=text -R ^package "${SOURCES}" | cut -f 2 -d: | sed -e 's/^package //' -e 's/;$//' | sort -u | tr '\n' ' ')
-javadoc -source 8 -Xdoclint:none -cp "zlib/${VERSION}:zlib/${VERSION}/*" -d "${OUTDIR}" --source-path "${SOURCES}/" ${PACKAGES}
+javadoc -source 8 -Xdoclint:none -cp "zlib/${VERSION}${SEP}zlib/${VERSION}/*" -d "${OUTDIR}" --source-path "${SOURCES}/" ${PACKAGES}
