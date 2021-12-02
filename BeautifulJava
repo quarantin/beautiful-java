@@ -184,9 +184,11 @@ cp "${REPO}/lib/junit-4.12.jar" "${OUTLIB}"
 cp "${REPO}/lib/hamcrest-2.2.jar" "${OUTLIB}"
 find "${ZOMBOID}" -name '*.jar' -exec cp {} "${OUTLIB}" \;
 if [ -d "${OUTDIR}/astar" ]; then
+	rm -rf "${OUTLIB}/astar"
 	mv "${OUTDIR}/astar" "${OUTLIB}"
 fi
 if [ -d "${OUTDIR}/rcon" ]; then
+	rm -rf "${OUTLIB}/rcon"
 	mv "${OUTDIR}/rcon" "${OUTLIB}"
 fi
 
@@ -208,7 +210,8 @@ sed -i ${BSDSED} \
 sed -i ${BSDSED} \
 	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
 	"${OUTDIR}/zombie/Lua/LuaManager.java" \
-	"${OUTDIR}/zombie/network/GameServer.java"
+	"${OUTDIR}/zombie/network/GameServer.java" \
+	"${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java" # 40.43
 
 sed -i ${BSDSED} \
 	-e 's|\((float)var[0-9]* \* (1.0F - (float)var[0-9]*\.getPerkLevel(PerkFactory\.Perks\.Aiming) / 15\.0F);\)$|// \1|' \
