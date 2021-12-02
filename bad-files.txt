@@ -1,7 +1,0 @@
-se/krka/kahlua/stdlib/CoroutineLib.java
-zombie/ai/states/SwipeStatePlayer.java
-zombie/characters/IsoPlayer.java
-zombie/iso/IsoCell.java
-zombie/network/GameServer.java
-zombie/scripting/commands/Lua/LuaCall.java
-zombie/Lua/LuaManager.java
