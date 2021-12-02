@@ -22,15 +22,37 @@ import com.sun.tools.javac.file.PathFileObject;
 
 public class BeautifulJava {
 
+	private JavacTool javacTool;
 	private JavacFileManager fileManager;
 
-	private JavacTool javacTool;
+	private String lineEnding;
+	private boolean doBackup;
+	private boolean dumpSymbols;
+	private boolean dumpMissingSymbols;
 
 	@SuppressWarnings("deprecation")
-	public BeautifulJava() {
+	public BeautifulJava(List<String> options) {
 		Context context = new Context();
 		fileManager = new JavacFileManager(context, true, Charset.forName("UTF-8"));
 		javacTool = new JavacTool();
+
+		for (String option : options) {
+
+			if (option.equals("--backup"))
+				doBackup = true;
+
+			else if (option.equals("--cr"))
+				lineEnding = "\r";
+
+			else if (option.equals("--crlf"))
+				lineEnding = "\r\n";
+
+			else if (option.equals("--dump"))
+				dumpSymbols = true;
+
+			else if (option.equals("--dump-missing"))
+				dumpMissingSymbols = true;
+		}
 	}
 
 	private static void findFiles(File sourceFile, List<File> sourceFiles) {
@@ -57,23 +79,12 @@ public class BeautifulJava {
 			return;
 		}
 
+		List<String> options = new ArrayList<>();
 		List<File> sourceFiles = new ArrayList<>();
 		for (String arg : args) {
 
-			if (arg.equals("--dump")) {
-				dumpSymbols = true;
-				dumpMissingSymbols = false;
-			}
-
-			else if (arg.equals("--dump-missing")) {
-				dumpSymbols = true;
-				dumpMissingSymbols = true;
-			}
-			else if (arg.equals("--cr")) {
-				lineEnding = "\r";
-			}
-			else if (arg.equals("--crlf")) {
-				lineEnding = "\r\n";
+			if (arg.startsWith("--")) {
+				options.add(arg);
 			}
 			else {
 				File file = new File(arg);
@@ -82,14 +93,14 @@ public class BeautifulJava {
 			}
 		}
 
-		new BeautifulJava().parseJavaSourceFile(sourceFiles, dumpSymbols, dumpMissingSymbols, lineEnding);
+		new BeautifulJava(options).parseJavaSourceFile(sourceFiles);
 	}
 
 	private String getSourcePath(CompilationUnitTree codeTree) {
 		return ((PathFileObject)codeTree.getSourceFile()).getPath().toString();
 	}
 
-	private void parseJavaSourceFile(List<File> sourceFiles, boolean dumpSymbols, boolean dumpMissingSymbols, String lineEnding) {
+	private void parseJavaSourceFile(List<File> sourceFiles) {
 
 		Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjectsFromFiles((Iterable<File>)sourceFiles);
 		JavacTask javacTask = (JavacTask)javacTool.getTask(null, fileManager, null, null, null, javaFiles);
@@ -143,6 +154,10 @@ public class BeautifulJava {
 					codeTree.accept(outputVisitor, "");
 
 					out.close();
+					if (doBackup) {
+						File backupFile = new File(sourcePath + ".bak");
+						sourceFile.renameTo(backupFile);
+					}
 					outputFile.renameTo(sourceFile);
 					variableVisitor.clear();
 				}
