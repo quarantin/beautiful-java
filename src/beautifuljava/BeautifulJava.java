@@ -10,7 +10,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -18,58 +17,138 @@ import com.sun.source.util.JavacTask;
 import com.sun.tools.javac.api.JavacTool;
 import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.file.PathFileObject;
 
 
 public class BeautifulJava {
 
-	private JavacFileManager jcFileManager;
+	private JavacFileManager fileManager;
 
-	private JavacTool jcTool;
+	private JavacTool javacTool;
 
 	@SuppressWarnings("deprecation")
 	public BeautifulJava() {
 		Context context = new Context();
-		jcFileManager = new JavacFileManager(context, true, Charset.forName("UTF-8"));
-		jcTool = new JavacTool();
+		fileManager = new JavacFileManager(context, true, Charset.forName("UTF-8"));
+		javacTool = new JavacTool();
+	}
+
+	private static void findFiles(File sourceFile, List<File> sourceFiles) {
+		if (!sourceFile.exists())
+			return;
+
+		else if (sourceFile.isFile() && sourceFile.getName().endsWith(".java"))
+			sourceFiles.add(sourceFile);
+
+		else if (sourceFile.isDirectory()) {
+			for (File file : sourceFile.listFiles())
+				findFiles(file, sourceFiles);
+		}
 	}
 
 	public static void main(String[] args) {
+
+		String lineEnding = null;
+		boolean dumpSymbols = false;
+		boolean dumpMissingSymbols = false;
 
 		if (args.length == 0) {
 			System.out.println("Usage: BeautifulJava [Java source files]");
 			return;
 		}
 
-		BeautifulJava sfp = new BeautifulJava();
-		for (int i = 0; i < args.length; i++)
-			sfp.parseJavaSourceFile(args[i]);
+		List<File> sourceFiles = new ArrayList<>();
+		for (String arg : args) {
+
+			if (arg.equals("--dump")) {
+				dumpSymbols = true;
+				dumpMissingSymbols = false;
+			}
+
+			else if (arg.equals("--dump-missing")) {
+				dumpSymbols = true;
+				dumpMissingSymbols = true;
+			}
+			else if (arg.equals("--cr")) {
+				lineEnding = "\r";
+			}
+			else if (arg.equals("--crlf")) {
+				lineEnding = "\r\n";
+			}
+			else {
+				File file = new File(arg);
+				if (file.exists())
+					findFiles(file, sourceFiles);
+			}
+		}
+
+		new BeautifulJava().parseJavaSourceFile(sourceFiles, dumpSymbols, dumpMissingSymbols, lineEnding);
 	}
 
-	public void parseJavaSourceFile(String sourcePath) {
+	private String getSourcePath(CompilationUnitTree codeTree) {
+		return ((PathFileObject)codeTree.getSourceFile()).getPath().toString();
+	}
 
-		File outputFile = new File(sourcePath.replace(".java", ".java.fixed"));
-		Iterable<? extends JavaFileObject> javaFiles = jcFileManager.getJavaFileObjects(sourcePath);
+	private void parseJavaSourceFile(List<File> sourceFiles, boolean dumpSymbols, boolean dumpMissingSymbols, String lineEnding) {
 
-		JavaCompiler.CompilationTask cTask = jcTool.getTask(null, jcFileManager, null, null, null, javaFiles);
-		JavacTask jcTask = (JavacTask)cTask;
+		Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjectsFromFiles((Iterable<File>)sourceFiles);
+		JavacTask javacTask = (JavacTask)javacTool.getTask(null, fileManager, null, null, null, javaFiles);
 
 		try {
 
-			PrintStream out = new PrintStream(new FileOutputStream(outputFile));
-			Iterable<? extends CompilationUnitTree> codeResult = jcTask.parse();
+			Iterable<? extends CompilationUnitTree> codeResult = javacTask.parse();
 
-			VariableVisitor vv = new VariableVisitor(null);
-			for (CompilationUnitTree codeTree : codeResult) {
-				codeTree.accept(vv, "");
+			if (dumpSymbols) {
+
+				String message = dumpMissingSymbols ? "missing" : "valid";
+				System.err.println("Dumping " + message + " symbols...");
+
+				DumperVisitor dumper = new DumperVisitor(dumpMissingSymbols);
+				//dumper.setDebug(true);
+				for (CompilationUnitTree codeTree : codeResult)
+					codeTree.accept(dumper, null);
+
+				//dumper.debugSymbols();
+				dumper.saveSymbols();
+				System.err.println("Done.");
+			}
+			else {
+
+				VariableVisitor variableVisitor = new VariableVisitor();
+				OutputVisitor outputVisitor = new OutputVisitor();
+				outputVisitor.loadSymbols();
+				outputVisitor.setLineEnding(lineEnding);
+
+				for (CompilationUnitTree codeTree : codeResult) {
+
+					String sourcePath = getSourcePath(codeTree);
+					System.out.println("Fixing " + sourcePath);
+
+					codeTree.accept(variableVisitor, null);
+
+					//variableVisitor.debugSymbols();
+
+					File sourceFile = new File(sourcePath);
+					File outputFile = new File(sourcePath + ".fixed");
+					File classFile  = new File(sourcePath.replace(".java", ".class"));
+					if (classFile.exists())
+						classFile.delete();
+
+					PrintStream out = new PrintStream(new FileOutputStream(outputFile));
+
+					outputVisitor.setOut(out);
+					outputVisitor.copy(variableVisitor);
+					//outputVisitor.debugSymbols();
+
+					codeTree.accept(outputVisitor, "");
+
+					out.close();
+					outputFile.renameTo(sourceFile);
+					variableVisitor.clear();
+				}
+
 			}
 
-			JavaSourceVisitor jsv = new JavaSourceVisitor(out, vv);
-			for (CompilationUnitTree codeTree : codeResult) {
-				codeTree.accept(jsv, "");
-			}
-
-			out.close();
-			outputFile.renameTo(new File(sourcePath));
 		}
 		catch (IOException ioerror) {
 			ioerror.printStackTrace();

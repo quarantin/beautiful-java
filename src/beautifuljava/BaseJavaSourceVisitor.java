@@ -10,171 +10,67 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import com.sun.source.util.TreeScanner;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.VariableTree;
+import com.sun.source.util.TreeScanner;
 
-public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
+public class BaseJavaSourceVisitor extends AbstractVisitor {
 
-	private String[] primitiveTypes = new String[] {
-		"boolean",
-		"byte",
-		"char",
-		"double",
-		"float",
-		"int",
-		"long",
-		"short",
-	};
+	private HashMap<String, HashMap<String, Symbol>> envDB;
+	private HashMap<String, HashMap<String, Symbol>> renvDB;
+	private HashMap<String, Vector<Symbol>> symbolsDB;
+	private HashMap<String, HashMap<String, String>> unicodeDB;
 
-	protected String indent;
-	protected PrintStream out;
-	protected boolean doDebug;
-	protected boolean doOutput;
-	protected boolean doReplace;
-	protected Stack<String> classStack;
-	protected Stack<String> methodStack;
-	protected HashMap<String, HashMap<String, String>> envs;
-	protected HashMap<String, HashMap<String, String>> renvs;
-	protected HashMap<String, HashMap<String, String>> utf8Literals;
-
-	public BaseJavaSourceVisitor(PrintStream out) throws IOException {
-		this(out, "\t");
+	public BaseJavaSourceVisitor() {
+		super();
+		this.envDB     = new HashMap<>();
+		this.renvDB    = new HashMap<>();
+		this.symbolsDB = new HashMap<>();
+		this.unicodeDB = new HashMap<>();
 	}
 
-	public BaseJavaSourceVisitor(PrintStream out, String indent) throws IOException {
-		this.out = out;
-		this.indent = indent;
-		this.doDebug = false;
-		this.doOutput = true;
-		this.doReplace = true;
-		this.classStack = new Stack<>();
-		this.methodStack = new Stack<>();
-		this.envs = new HashMap<>();
-		this.renvs = new HashMap<>();
-		this.utf8Literals = new HashMap<>();
+	public void copy(BaseJavaSourceVisitor bjsv) {
+		this.envDB     = bjsv.envDB;
+		this.renvDB    = bjsv.renvDB;
+		this.symbolsDB = bjsv.symbolsDB;
+		this.unicodeDB = bjsv.unicodeDB;
 	}
 
-	public BaseJavaSourceVisitor(PrintStream out, BaseJavaSourceVisitor bjsv) throws IOException {
-		this(out, bjsv, "\t");
+	public void clear() {
+		envDB.clear();
+		renvDB.clear();
+		unicodeDB.clear();
+		symbolsDB.clear();
 	}
 
-	public BaseJavaSourceVisitor(PrintStream out, BaseJavaSourceVisitor bjsv, String indent) throws IOException {
-		this.out = out;
-		this.indent = indent;
-		this.doDebug = false;
-		this.doOutput = true;
-		this.doReplace = true;
-		this.doOutput = bjsv.doOutput;
-		this.doReplace = bjsv.doReplace;
-		this.classStack = bjsv.classStack;
-		this.methodStack = bjsv.methodStack;
-		this.envs = bjsv.envs;
-		this.renvs = bjsv.renvs;
-		this.utf8Literals = bjsv.utf8Literals;
-	}
-
-	public String getEnvKey() {
-
-		if (classStack.empty())
-			return "";
-
-		if (methodStack.empty())
-			return classStack.peek();
-
-		return classStack.peek() + "." + methodStack.peek();
-	}
-
-	private boolean isPrimitiveType(String type) {
-
-		for (int i = 0; i < primitiveTypes.length; i++)
-			if (type.toLowerCase().equals(primitiveTypes[i]))
-				return true;
-
-		return false;
-	}
-
-	public String getUniqueName(String symbol, boolean primitive) {
-
-		if (!primitive && rgetenv(symbol) == null)
-			return symbol;
-
-		for (int i = (primitive ? 1 : 2); ; i++) {
-
-			String uniqueSymbol = symbol + i;
-			if (rgetenv(uniqueSymbol) == null)
-				return uniqueSymbol;
+	public void debugSymbols() {
+		for (String key : symbolsDB.keySet()) {
+			System.err.println(key);
+			Vector<Symbol> symbols = symbolsDB.get(key);
+			for (Symbol symbol : symbols)
+				System.err.println(symbol);
+			System.err.println();
 		}
 	}
 
-	public String getNewName(String symbol, String type) {
-
-		if (!symbol.startsWith("var"))
-			throw new RuntimeException("This should never happen!");
-
-		if (type.equals(""))
-			return symbol;
-
-		boolean primitive = isPrimitiveType(type);
-
-		if (type.endsWith("[]"))
-			type = type.replace("[]", "Array");
-
-		if (!primitive) {
-
-			int index = type.lastIndexOf(".");
-			if (index > -1)
-				type = type.substring(index + 1);
-
-			if (type.startsWith("Iso"))
-				type = type.substring(3);
-
-			else if (type.startsWith("IO"))
-				type = "io" + type.substring(2);
-
-			type = type.substring(0, 1).toLowerCase() + type.substring(1);
-		}
-
-		return getUniqueName(type, primitive);
+	public void saveSymbols() throws IOException {
+		JSON.saveSymbolsDB(getSymbolsPath(), symbolsDB);
 	}
 
-	public void debugCallframe() {
-		Map.Entry<String, String> entry;
-		HashMap<String, String> env;
-		String envKey = getEnvKey();
-
-		System.err.println("===================");
-
-		env = envs.get(envKey);
-		if (env == null) {
-			System.err.println("Env is null");
-			return;
-		}
-
-		System.err.println(envKey + " [size: " + env.size() + "]");
-		ArrayList<String> keySet = new ArrayList<>(env.keySet());
-
-		Collections.sort(keySet, new Comparator<String>() {
-			public int compare(String s1, String s2) {
-				int i1 = Integer.parseInt(s1.substring(3));
-				int i2 = Integer.parseInt(s2.substring(3));
-				return i2 - i1;
-			}
-		});
-
-		for (String key : keySet) {
-			String value = env.get(key);
-			System.err.println(key + " = " + value);
-		}
+	public void loadSymbols() throws IOException {
+		symbolsDB.clear();
+		JSON.loadSymbolsDB(getSymbolsPath(), symbolsDB);
 	}
 
-	public boolean canReplace(String symbol, String output) {
+	private boolean canReplace(String symbol, String output) {
 		String patternStr = "(^|[^_a-zA-Z0-9])" + symbol + "($|[^_a-zA-Z0-9])";
 		Pattern pattern = Pattern.compile(patternStr);
 		boolean result = !pattern.matcher(output).matches();
@@ -183,38 +79,33 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 
 	public String replace(String output) {
 
-		if (doDebug)
-			debugCallframe();
-
+		Vector<Symbol> symbols;
+		HashMap<String, String> uenv;
 		String envKey = getEnvKey();
-		HashMap<String, String> env = envs.get(envKey);
-		HashMap<String, String> utf8Map = utf8Literals.get(envKey);
 
-		if (env != null) {
-			ArrayList<String> keySet = new ArrayList<>(env.keySet());
+		symbols = symbolsDB.get(envKey);
+		if (symbols != null) {
 
-			Collections.sort(keySet, new Comparator<String>() {
-				public int compare(String s1, String s2) {
-					int i1 = Integer.parseInt(s1.substring(3));
-					int i2 = Integer.parseInt(s2.substring(3));
-					return i2 - i1;
-				}
-			});
+			for (Symbol symbol : symbols) {
 
-			for (String oldSymbol : keySet) {
-				String newSymbol = env.get(oldSymbol);
+				if (symbol.newName == null)
+					symbol.newName = getenv(symbol.oldName);
 
-				if (!canReplace(newSymbol, output))
-					throw new RuntimeException("ERROR: Can't replace " + oldSymbol + " with " + newSymbol + "\nmethod:\n" + output);
+				if (symbol.newName == null)
+					throw new RuntimeException("ERROR: " + envKey + " Can't replace " + symbol.oldName + " with null symbol");
 
-				output = output.replace(oldSymbol, newSymbol);
+				if (!canReplace(symbol.newName, output))
+					throw new RuntimeException("ERROR: " + envKey + " Can't replace " + symbol.oldName + " with " + symbol.newName + "\nmethod:\n" + output);
+
+				output = output.replace(symbol.oldName, symbol.newName);
 			}
 		}
 
-		if (utf8Map != null) {
+		uenv = unicodeDB.get(envKey);
+		if (uenv != null) {
 
-			for (String ascii : utf8Map.keySet()) {
-				String utf8 = utf8Map.get(ascii);
+			for (String ascii : uenv.keySet()) {
+				String utf8 = uenv.get(ascii);
 				output = output.replace(ascii, utf8);
 			}
 		}
@@ -222,59 +113,62 @@ public class BaseJavaSourceVisitor extends TreeScanner<String, String> {
 		return output;
 	}
 
-	protected String obj2str(Object object) {
-		return (object == null ? "" : object.toString());
+	public String getenv(String name) {
+
+		HashMap<String, Symbol> env = envDB.get(getEnvKey());
+		if (env == null)
+			return null;
+
+		Symbol symbol = env.get(name);
+		if (symbol == null)
+			return null;
+
+		return symbol.newName;
 	}
 
-	protected void print(String string) {
-		if (doOutput)
-			out.print(string);
+	public String rgetenv(String name) {
+
+		HashMap<String, Symbol> renv = renvDB.get(getEnvKey());
+		if (renv == null)
+			return null;
+
+		Symbol symbol = renv.get(name);
+		if (symbol == null)
+			return null;
+
+		return symbol.oldName;
 	}
 
-	protected void println(String string) {
-		if (doOutput)
-			out.println(string);
-	}
+	public void setenv(Symbol symbol) {
 
-	public void debugStack(String stackName, Stack<String> stack) {
-		println("DEBUG: " + stackName);
-		for (int i = 0; i < stack.size(); i++)
-			println("DEBUG: Stack[" + i + "] = " + stack.get(i));
-		println("");
-	}
-
-	public void debugClassStack() {
-		debugStack("class stack", classStack);
-	}
-
-	public void debugMethodStack() {
-		debugStack("method stack", methodStack);
-	}
-
-	public String getenv(String symbol) {
 		String envKey = getEnvKey();
-		HashMap<String, String> env = envs.get(envKey);
-		return env == null ? null : env.get(symbol);
-	}
+		HashMap<String, Symbol> env = envDB.get(envKey);
+		HashMap<String, Symbol> renv = renvDB.get(envKey);
+		Vector<Symbol> symbols = symbolsDB.get(envKey);
 
-	public String rgetenv(String symbol) {
-		String envKey = getEnvKey();
-		HashMap<String, String> renv = renvs.get(envKey);
-		return renv == null ? null : renv.get(symbol);
-	}
-
-	public void setenv(String oldSymbol, String newSymbol) {
-		String envKey = getEnvKey();
-		HashMap<String, String> env = envs.get(envKey);
-		HashMap<String, String> renv = renvs.get(envKey);
 		if (env == null) {
 			env = new HashMap<>();
 			renv = new HashMap<>();
-			envs.put(envKey, env);
-			renvs.put(envKey, renv);
+			symbols = new Vector<>();
+			envDB.put(envKey, env);
+			renvDB.put(envKey, renv);
+			symbolsDB.put(envKey, symbols);
 		}
 
-		env.put(oldSymbol, newSymbol);
-		renv.put(newSymbol, oldSymbol);
+		symbol.index = symbols.size();
+		env.put(symbol.oldName, symbol);
+		renv.put(symbol.newName, symbol);
+		symbols.add(symbol);
+	}
+
+	public void usetenv(String ascii, String utf8) {
+		String envKey = getEnvKey();
+		HashMap<String, String> uenv = unicodeDB.get(envKey);
+		if (uenv == null) {
+			uenv = new HashMap<>();
+			unicodeDB.put(envKey, uenv);
+		}
+
+		uenv.put(ascii, utf8);
 	}
 }

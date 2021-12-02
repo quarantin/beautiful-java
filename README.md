@@ -72,11 +72,7 @@ Once the script has finished, the Java source files should be available in this 
 Updating BeautifulJava is done as follow:
 
 	cd "${HOME}/beautiful-java/"
-	git pull
-In case you're getting an error with git, try the following commands:
-
-	git reset --hard origin/main
-	git pull
+	./bin/update
 
 ## Uninstalling BeautifulJava
 To uninstall BeautifulJava, simply delete beautiful-java folder:

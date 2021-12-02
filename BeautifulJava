@@ -4,7 +4,6 @@ echo
 
 IFS="
 "
-
 config_error() {
 	echo "${1}"
 	echo
@@ -56,9 +55,11 @@ find_path() {
 	echo "${DIRPATH}"
 }
 
+
 #
 # OS specific
 #
+PATHSEP=':'
 OS="$(uname -s)"
 if [ "${OS}" = 'Darwin' ]; then
 	BSDSED="''"
@@ -78,19 +79,25 @@ elif [ "${OS}" = 'Linux' ]; then
 	ZOMBOID_EXTRA=(''
 		'projectzomboid'
 	)
-else
+elif [ "$(uname -o)" = 'Msys' ]; then
 	FORMATER=idea64.exe
 	FORMATER_ARG=format
 	INTELLIJ_EXTRA=()
 	ZOMBOID_EXTRA=()
+	PATHSEP=';'
+	PWDOPT=-W
+	LINEFEED='--crlf'
 	OS="$(uname -o)"
+else
+	echo "Unsupported operating system: ${OS}"
+	exit
 fi
 
 
 #
 # Looking for config.txt
 #
-REPO="$(cd "$(dirname "${0}")"; pwd)"
+REPO="$(cd "$(dirname "${0}")"; pwd ${PWDOPT})"
 CONFIG="${REPO}/config.txt"
 if ! [ -z "${1}" ]; then
 	CONFIG="${1}"
@@ -117,6 +124,7 @@ if ! [ -d "${INTELLIJ}" ]; then
 	config_error "${INTELLIJ}"
 fi
 
+
 #
 # Looking for Zomboid install folder
 #
@@ -124,6 +132,7 @@ ZOMBOID=$(find_path zomboid Zomboid zombie/core/Core.class)
 if ! [ -d "${ZOMBOID}" ]; then
 	config_error "${ZOMBOID}"
 fi
+
 
 #
 # Looking for Java
@@ -144,7 +153,7 @@ fi
 #
 # Looking for Zomboid version
 #
-echo "* Retrieving Zomboid version..."
+echo "* Checking Zomboid version..."
 OUTDIR="$(pwd)/sources"
 mkdir -p "${OUTDIR}"
 cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
@@ -168,37 +177,54 @@ else
 	mkdir -p "${OUTDIR}"
 fi
 
+
 #
-# Do the work
+# Copy all class files to target folder
 #
 echo "* Copying class files..."
 cp -r "${ZOMBOID}/zombie" "${OUTDIR}"
 
 
+#
+# Run IntelliJ decompiler
+#
 echo "* Decompiling class files..."
-"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}" "${OUTDIR}"
+"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}" "${OUTDIR}" | sed -e 's/^INFO:  //' -e '/^\.\.\. done/d'
 
 
-echo "* Deleting class files..."
-find "${OUTDIR}" -name '*.class' -exec rm -f {} \; > /dev/null
-
-
-echo "* Restoring missing symbols..."
+#
+# Fix invalid Java syntax
+#
+echo
 while read FILE; do
 
-	echo "Fixing symbols ${FILE}"
+	if [ -f "${OUTDIR}/${FILE}" ]; then
 
-	sed -i ${BSDSED} \
-		-e 's/<invokedynamic>//g' \
-		-e 's/(Object\[\])(\("ID",.*\)));/(Object[])new Object[]{\1});/g' \
-		-e 's/(Object\[\])(\(.*\)))\[/(Object[])new Object[]{\1})[/g' \
-		-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
-		"${FILE}"
+		sed -i ${BSDSED} \
+			-e 's/<invokedynamic>//g' \
+			-e 's/(Object\[\])(\(.*\)));$/(Object[])new Object[]{\1});/' \
+			-e 's/(Object\[\])(\(.*\)))\[1\];/(Object[])new Object[]{\1})[1];/' \
+			-e '/1.0F.*getPerkLevel(PerkFactory.Perks.Aiming).*15\.0F/d' \
+			"${OUTDIR}/${FILE}"
+	fi
 
-	"${JAVA}" -cp "${REPO}/classes" beautifuljava.BeautifulJava "${FILE}"
-
-done < <(find "${OUTDIR}" -type f -name '*.java')
+done < "${REPO}/bad-files.txt"
 
 
+#
+# Run BeautifulJava
+#
+echo "* Restoring missing symbols..."
+"${JAVA}" -cp "${REPO}/classes${PATHSEP}${REPO}/lib/*" beautifuljava.BeautifulJava ${LINEFEED} "${OUTDIR}"
+
+
+#
+# Run IntelliJ code formatter
+#
+echo
 echo "* Formating source files..."
-"${INTELLIJ}/bin/${FORMATER}" ${FORMATER_ARG} -r -s "${REPO}/formatter.xml" "${OUTDIR}"
+FORMAT_CONFIG="${REPO}/formatter.xml"
+if ! [ -f "${FORMAT_CONFIG}" ]; then
+	cp "${FORMAT_CONFIG}.example" "${FORMAT_CONFIG}"
+fi
+"${INTELLIJ}/bin/${FORMATER}" ${FORMATER_ARG} -r -m '*.java' -s "${FORMAT_CONFIG}" "${OUTDIR}" 2>&1 | sed -e '/^IntelliJ/d' -e '/Notification group CodeWithMe is already registered/d' -e 's/\.\.\.OK$//' -e '/^SLF4J:/d'
