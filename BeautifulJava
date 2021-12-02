@@ -219,6 +219,7 @@ done < "${REPO}/bad-files.txt"
 echo "* Restoring missing symbols..."
 "${JAVA}" -cp "${REPO}/classes${PATHSEP}${REPO}/lib/*" beautifuljava.BeautifulJava ${LINEFEED} "${OUTDIR}"
 
+sed -i ${BSDSED} 's/@LuaMethod(name = "\([^"]\+\)")/@LuaMethod(name = "\1", global = true)/' "${OUTDIR}/zombie/iso/IsoCell.java"
 
 #
 # Run IntelliJ code formatter
