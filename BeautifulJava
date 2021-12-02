@@ -176,16 +176,24 @@ else
 	OUTLIB="${OUTLIB}/${VERSION}"
 fi
 
-rm -f "${OUTLIB}/"*
-rm -rf "${OUTDIR}/"{com,de,fmod,javax,org,se,sun,zombie}
-mkdir -p "${OUTDIR}" "${OUTLIB}"
+rm -rf "${OUTLIB}" "${OUTDIR}/"{astar,com,de,fmod,javax,org,rcon,se,sun,zombie}
+mkdir -p "${OUTLIB}" "${OUTDIR}"
 
 #
 # Copy all class files to target folder
 #
 echo "* Copying class files..."
-cp -r "${ZOMBOID}/"{com,de,fmod,javax,org,se,sun,zombie} "${OUTDIR}"
-cp "${ZOMBOID}/"*.jar "${OUTLIB}"
+cp -r "${ZOMBOID}/"{astar,com,de,fmod,javax,org,rcon,se,sun,zombie} "${OUTDIR}" 2> /dev/null
+cp "${REPO}/lib/junit-4.12.jar" "${OUTLIB}"
+cp "${REPO}/lib/hamcrest-2.2.jar" "${OUTLIB}"
+find "${ZOMBOID}" -name '*.jar' -exec cp {} "${OUTLIB}" \;
+if [ -d "${OUTDIR}/astar" ]; then
+	mv "${OUTDIR}/astar" "${OUTLIB}"
+fi
+if [ -d "${OUTDIR}/rcon" ]; then
+	mv "${OUTDIR}/rcon" "${OUTLIB}"
+fi
+
 
 #
 # Run IntelliJ decompiler
