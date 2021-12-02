@@ -158,6 +158,7 @@ public class BeautifulJava {
 						File backupFile = new File(sourcePath + ".bak");
 						sourceFile.renameTo(backupFile);
 					}
+					sourceFile.delete();
 					outputFile.renameTo(sourceFile);
 					variableVisitor.clear();
 				}
