@@ -11,7 +11,7 @@ if [ -z "${VERSION}" ]; then
 fi
 
 OS="$(uname -s)"
-if [ "${OS}" = "Darwin"] || [ "${OS}" = "Linux" ]; then
+if [ "${OS}" = "Darwin" ] || [ "${OS}" = "Linux" ]; then
 	SEP=':'
 elif [ "$(uname -o)" = 'Msys' ]; then
 	SEP=';'
