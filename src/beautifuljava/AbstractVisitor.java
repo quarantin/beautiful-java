@@ -185,6 +185,20 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 		return false;
 	}
 
+	protected boolean isMissingSymbol(String name) {
+
+		if (!name.startsWith("var"))
+			return false;
+
+		try {
+			Integer.parseInt(name.substring(3));
+			return true;
+		}
+		catch (Exception error) {
+			return false;
+		}
+	}
+
 	private String getUniqueName(String symbol, boolean primitive) {
 
 		if (!primitive && rgetenv(symbol) == null)
