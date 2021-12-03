@@ -40,6 +40,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 	public String visitPackage(PackageTree packageTree, String indent) {
 
 		String packageName = packageTree.getPackageName().toString();
+		pushPackage(packageName);
 
 		for (AnnotationTree annotationTree : packageTree.getAnnotations())
 			print(annotationTree.toString() + this.nl);

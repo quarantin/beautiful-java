@@ -11,6 +11,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.VariableTree;
 
 public class VariableVisitor extends BaseJavaSourceVisitor {
@@ -34,6 +35,15 @@ public class VariableVisitor extends BaseJavaSourceVisitor {
 
 		if (!oldName.equals(newName))
 			setenv(new Symbol(type, oldName, newName));
+	}
+
+	@Override
+	public String visitPackage(PackageTree packageTree, String indent) {
+
+		String packageName = packageTree.getPackageName().toString();
+		pushPackage(packageName);
+
+		return super.visitPackage(packageTree, indent);
 	}
 
 	@Override

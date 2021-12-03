@@ -47,12 +47,14 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	private String indent = DEFAULT_INDENT;
 	private String symbolsPath = DEFAULT_SYMBOLS_PATH;
 
+	private Stack<String> packageStack;
 	private Stack<String> classStack;
 	private Stack<String> methodStack;
 
 	protected String nl = DEFAULT_LINE_ENDING;
 
 	public AbstractVisitor() {
+		this.packageStack = new Stack<>();
 		this.classStack  = new Stack<>();
 		this.methodStack = new Stack<>();
 	}
@@ -91,13 +93,16 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 
 	public String getEnvKey() {
 
+		if (packageStack.empty())
+			throw new RuntimeException("This should never happen!");
+
 		if (classStack.empty())
 			throw new RuntimeException("This should never happen!");
 
 		if (methodStack.empty())
-			return classStack.peek();
+			return packageStack.peek() + "." + classStack.peek();
 
-		return classStack.peek() + "." + methodStack.peek();
+		return packageStack.peek() + "." + classStack.peek() + "." + methodStack.peek();
 	}
 
 	public String getIndent() {
@@ -119,6 +124,18 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 
 	public String getSymbolsPath() {
 		return symbolsPath;
+	}
+
+	public String peekPackage() {
+		return packageStack.peek();
+	}
+
+	public void popPackage() {
+		packageStack.pop();
+	}
+
+	public void pushPackage(String packageName) {
+		packageStack.push(packageName);
 	}
 
 	public String peekClass() {
