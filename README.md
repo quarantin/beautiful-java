@@ -9,16 +9,20 @@ Once setup properly, BeautifulJava will do the following for you:
 ## Prerequisites
 
 ### Zomboid
-Obviously you need to have Project Zomboid installed:
+Obviously you need Project Zomboid installed:
 
 https://projectzomboid.com/
+
+To configure BeautifulJava, you'll have to find the path to Zomboid install folder. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties...**, choose **LOCAL FILES**, then click the **Browse...** button. Open the properties of any file available in the window that just opened and copy its location.
+
+This is the path you'll have to set for **ZOMBOID** when configuring BeautifulJava.
 
 ### IntelliJ
 You also have to install IntelliJ Community Edition. BeautifulJava is using IntelliJ for disassembling and formatting the code. It can be downloaded from here:
 
 https://www.jetbrains.com/idea/download/
 
-Remember the location where you install IntelliJ, you'll need it later.
+Remember the location where you install IntelliJ. This is the path you'll have to set for **INTELLIJ** when configuring BeautifulJava.
 
 ### Prerequisites for Linux
 - Install Git:
@@ -35,38 +39,37 @@ Remember the location where you install IntelliJ, you'll need it later.
 ## Installing BeautifulJava
 Once you've got Zomboid, IntelliJ, and the prerequisites for your operating system installed, you can proceed to installing BeautifulJava.
 
-Start a Bash interpreter and run the following commands:
+Start a Bash interpreter (or Git Bash) and run the following commands:
 
 	cd "${HOME}"
 	git clone https://github.com/quarantin/beautiful-java
-	cd beautiful-java
 
 ## Configuring BeautifulJava
-Before you can configure BeautifulJava, you have to find the path to Zomboid install folder. Open Steam, go to your **Library** section, right-click the game **Project Zomboid**, select **Properties...**, choose **LOCAL FILES**, then click **Browse...**.
+Type the following commands:
+
+	cd "${HOME}/beautiful-java"
+	cp resources/config.txt.example config.txt
+
+Edit the file **config.txt** according to your setup. You have to identify the section for your operating system, and remove the ';' character in front of the lines starting with INTELLIJ and ZOMBOID. Replace the paths with the values from previous steps. When done, just save the file and quit the editor.
 
 ### Configuration for Linux
-	cp config.txt.example config.txt
 	vim config.txt
-Edit **config.txt** according to your setup:
 
 ### Configuration for Mac OSX
-	cp config.txt.example config.txt
 	open -a TextEdit config.txt
-Edit **config.txt** according to your setup:
 
 ### Configuration for Windows
-	cp config.txt.example config.txt
 	start notepad++ config.txt
-Edit **config.txt** according to your setup:
 
 ## Using BeautifulJava
-Run the following commands and wait for the script to finish:
+To run BeautifulJava, type the following commands and wait for the script to finish. It should take at minimum a few minutes:
 
 	cd "${HOME}/beautiful-java/"
 	./BeautifulJava
+
 Once the script has finished, the Java source files should be available in this folder:
 
-	${HOME}/beautiful-java/sources/
+	${HOME}/beautiful-java/pz/sources/
 
 ## Updating BeautifulJava
 Updating BeautifulJava is done as follow:
