@@ -26,7 +26,6 @@ public class BeautifulJava {
 	private JavacFileManager fileManager;
 
 	private String lineEnding;
-	private boolean doBackup;
 	private boolean dumpSymbols;
 	private boolean dumpMissingSymbols;
 
@@ -38,10 +37,7 @@ public class BeautifulJava {
 
 		for (String option : options) {
 
-			if (option.equals("--backup"))
-				doBackup = true;
-
-			else if (option.equals("--cr"))
+			if (option.equals("--cr"))
 				lineEnding = "\r";
 
 			else if (option.equals("--crlf"))
@@ -141,9 +137,6 @@ public class BeautifulJava {
 
 					File sourceFile = new File(sourcePath);
 					File outputFile = new File(sourcePath + ".fixed");
-					File classFile  = new File(sourcePath.replace(".java", ".class"));
-					if (classFile.exists())
-						classFile.delete();
 
 					PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 
@@ -154,10 +147,6 @@ public class BeautifulJava {
 					codeTree.accept(outputVisitor, "");
 
 					out.close();
-					if (doBackup) {
-						File backupFile = new File(sourcePath + ".bak");
-						sourceFile.renameTo(backupFile);
-					}
 					sourceFile.delete();
 					outputFile.renameTo(sourceFile);
 					variableVisitor.clear();
