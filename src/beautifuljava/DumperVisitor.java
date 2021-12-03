@@ -11,8 +11,15 @@ public class DumperVisitor extends VariableVisitor {
 
 	public void substitute(String oldName, String type) {
 
-		boolean isMissing = oldName.startsWith("var");
-		if ((dumpMissing && isMissing) || (!dumpMissing && !isMissing))
-			setenv(new Symbol(type, oldName, oldName));
+		boolean isMissing = isMissingSymbol(oldName);
+
+		if (dumpMissing && isMissing)
+			setenv(new Symbol(type, oldName, null));
+
+		else if (!dumpMissing && !isMissing)
+			setenv(new Symbol(type, null, oldName));
+
+		else
+			throw new RuntimeException("This should never happen!");
 	}
 }
