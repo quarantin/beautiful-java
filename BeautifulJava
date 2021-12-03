@@ -1,254 +1,36 @@
 #!/bin/bash
 set -e
-echo
-
-IFS="
-"
-config_error() {
-	echo "${1}"
-	echo
-	echo "Please follow configuration steps here:"
-	echo "https://github.com/quarantin/beautiful-java/#configuring-beautifuljava"
-	exit
-}
-
-find_path() {
-
-	PATTERN="${1}"
-	TARGET="${2}"
-	CHECK="${3}"
-
-	DIRPATH="$(grep -i "^${PATTERN}" "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
-
-	if [ -z "${DIRPATH}" ]; then
-		echo "ERROR: ${TARGET} path missing from config.txt"
-		return
-
-	elif ! [ -d "${DIRPATH}" ]; then
-		echo "ERROR: ${TARGET} path is invalid: ${DIRPATH}"
-		return
-	fi
-
-	if [ "${PATTERN}" = intellij ]; then
-		EXTRAS=("${INTELLIJ_EXTRA[@]}")
-
-	elif [ "${PATTERN}" = zomboid ]; then
-		EXTRAS=("${ZOMBOID_EXTRA[@]}")
-
-	else
-		echo "ERROR: This should never happen!"
-		return
-	fi
-
-	for EXTRA in "${EXTRAS[@]}"; do
-		if [ -f "${DIRPATH}/${EXTRA}/${CHECK}" ]; then
-			DIRPATH="${DIRPATH}/${EXTRA}"
-			break
-		fi
-	done
-
-	if ! [ -f "${DIRPATH}/${CHECK}" ]; then
-		echo "ERROR: ${TARGET} path is invalid: ${DIRPATH}"
-		return
-	fi
-
-	echo "${DIRPATH}"
-}
-
+cd "$(dirname "${BASH_SOURCE}")"
 
 #
-# OS specific
-#
-PATHSEP=':'
-OS="$(uname -s)"
-if [ "${OS}" = 'Darwin' ]; then
-	BSDSED="''"
-	FORMATER=format.sh
-	INTELLIJ_EXTRA=(''
-		'Contents'
-	)
-	ZOMBOID_EXTRA=(''
-		'Project Zomboid.app'
-		'Project Zomboid.app/Contents'
-		'Project Zomboid.app/Contents/Java'
-	)
-elif [ "${OS}" = 'Linux' ]; then
-	FORMATER=idea.sh
-	FORMATER_ARG=format
-	INTELLIJ_EXTRA=()
-	ZOMBOID_EXTRA=(''
-		'projectzomboid'
-	)
-elif [ "$(uname -o)" = 'Msys' ]; then
-	FORMATER=idea64.exe
-	FORMATER_ARG=format
-	INTELLIJ_EXTRA=()
-	ZOMBOID_EXTRA=()
-	PATHSEP=';'
-	PWDOPT=-W
-	LINEFEED='--crlf'
-	OS="$(uname -o)"
-else
-	echo "Unsupported operating system: ${OS}"
-	exit
-fi
-
-
-#
-# Looking for config.txt
-#
-REPO="$(cd "$(dirname "${0}")"; pwd ${PWDOPT})"
-CONFIG="${REPO}/config.txt"
-if ! [ -f "${CONFIG}" ]; then
-	config_error "ERROR: ${CONFIG} not found"
-fi
-
-if [ "${OS}" = 'Msys' ]; then
-	sed -i 's/\r//' "${CONFIG}"
-	HASBACKSLASH="$(grep -v '^;\|^$' "${CONFIG}" | grep '\\' || true)"
-	if ! [ -z "${HASBACKSLASH}" ]; then
-		sed -i 's/\\/\//g' "${CONFIG}"
-	fi
-fi
-
-
-#
-# Looking for IntelliJ install folder
-#
-INTELLIJ=$(find_path intellij IntelliJ bin/idea.svg)
-if ! [ -d "${INTELLIJ}" ]; then
-	config_error "${INTELLIJ}"
-fi
-
-
-#
-# Looking for Zomboid install folder
-#
-ZOMBOID=$(find_path zomboid Zomboid zombie/core/Core.class)
-if ! [ -d "${ZOMBOID}" ]; then
-	config_error "${ZOMBOID}"
-fi
-
-
-#
-# Looking for Java
-#
-JAVA="$(grep -i ^java "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
-if ! [ -f "${JAVA}" ]; then
-	JAVA="${INTELLIJ}/jbr/bin/java"
-	if ! [ -f "${JAVA}" ]; then
-		JAVA="${INTELLIJ}/jbr/Contents/Home/bin/java"
-		if ! [ -f "${JAVA}" ]; then
-			echo "ERROR: java interpreter not found."
-			config_error
-		fi
-	fi
-fi
-
-
-#
-# Looking for Zomboid version
+# Check Zomboid version
 #
 echo "* Checking Zomboid version..."
-OUTDIR="$(pwd)/sources"
-OUTLIB="$(pwd)/zlib"
-mkdir -p "${OUTDIR}" "${OUTLIB}"
-cp "${ZOMBOID}/zombie/core/Core.class" "${OUTDIR}"
-DECOMPILER="${INTELLIJ}/plugins/java-decompiler/lib/java-decompiler.jar"
-MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
-"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}/Core.class" "${OUTDIR}" > /dev/null
-VERSION="$(grep -o 'new GameVersion(.*' "${OUTDIR}/Core.java" | cut -f2 -d'(' | cut -f1,2 -d',' | sed 's/, /./')"
-if [ -z "${VERSION}" ]; then
-	VERSION="$(grep 'versionNumber =' "${OUTDIR}/Core.java" | cut -f2 -d= | cut -f2 -d'"')"
-fi
-
-rm -f "${OUTDIR}/Core.class" "${OUTDIR}/Core.java"
-
-if [ -z "${VERSION}" ]; then
-	echo "* No version found."
-else
-	echo "* Found version ${VERSION}"
-	OUTDIR="${OUTDIR}/${VERSION}"
-	OUTLIB="${OUTLIB}/${VERSION}"
-fi
-
-rm -rf "${OUTLIB}" "${OUTDIR}/"{astar,com,de,fmod,javax,org,rcon,se,sun,zombie}
-mkdir -p "${OUTLIB}" "${OUTDIR}"
+. ./scripts/config.sh --clean
+echo "* Found version ${VERSION}"
 
 #
-# Copy all class files to target folder
+# Copy zomboid files
 #
-echo "* Copying class files..."
-cp -r "${ZOMBOID}/"{astar,com,de,fmod,javax,org,rcon,se,sun,zombie} "${OUTDIR}" 2> /dev/null || true
-cp "${REPO}/lib/junit-4.12.jar" "${OUTLIB}"
-cp "${REPO}/lib/hamcrest-2.2.jar" "${OUTLIB}"
-find "${ZOMBOID}" -name '*.jar' -exec cp {} "${OUTLIB}" \;
-if [ -d "${OUTDIR}/astar" ]; then
-	rm -rf "${OUTLIB}/astar"
-	mv "${OUTDIR}/astar" "${OUTLIB}"
-fi
-if [ -d "${OUTDIR}/rcon" ]; then
-	rm -rf "${OUTLIB}/rcon"
-	mv "${OUTDIR}/rcon" "${OUTLIB}"
-fi
-
+echo "* Copying Zomboid files..."
+. ./scripts/copyfiles.sh
 
 #
 # Run IntelliJ decompiler
 #
 echo "* Decompiling class files..."
-"${JAVA}" -cp "${DECOMPILER}" "${MAIN}" "${OUTDIR}" "${OUTDIR}" | sed -e 's/^INFO:  //' -e '/^\.\.\. done/d'
-
-
-#
-# Fix invalid Java syntax
-#
-
-FILE="${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
-if [ -f "${FILE}" ]; then
-	sed -i ${BSDSED} \
-		-e 's/return yield(/return this.yield(/' \
-		"${OUTDIR}/se/krka/kahlua/stdlib/CoroutineLib.java"
-fi
-
-sed -i ${BSDSED} \
-	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
-	"${OUTDIR}/zombie/Lua/LuaManager.java" \
-	"${OUTDIR}/zombie/network/GameServer.java"
-
-# <= 40.43
-FILE="${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java"
-if  [ -f "${FILE}" ]; then
-	sed -i ${BSDSED} \
-		-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
-		"${OUTDIR}/zombie/scripting/commands/Lua/LuaCall.java"
-fi
-
-sed -i ${BSDSED} \
-	-e 's|\((float)var[0-9]* \* (1.0F - (float)var[0-9]*\.getPerkLevel(PerkFactory\.Perks\.Aiming) / 15\.0F);\)$|// \1|' \
-	"${OUTDIR}/zombie/ai/states/SwipeStatePlayer.java"
-
-sed -i ${BSDSED} \
-	-e 's|<invokedynamic>|/* <invokedynamic> */|' \
-	"${OUTDIR}/zombie/characters/IsoPlayer.java"
-
+. ./scripts/decompile.sh
 
 #
 # Run BeautifulJava
 #
 echo
 echo "* Fixing symbols..."
-"${JAVA}" -cp "${REPO}/classes${PATHSEP}${REPO}/lib/*" beautifuljava.BeautifulJava ${LINEFEED} "${OUTDIR}" ${@}
-
-sed -i ${BSDSED} 's/@LuaMethod(name = "\([^"]\+\)")/@LuaMethod(name = "\1", global = true)/' "${OUTDIR}/zombie/iso/IsoCell.java"
+. ./scripts/beautiful.sh ${@}
 
 #
 # Run IntelliJ code formatter
 #
 echo
 echo "* Formating source files..."
-FORMAT_CONFIG="${REPO}/formatter.xml"
-if ! [ -f "${FORMAT_CONFIG}" ]; then
-	cp "${FORMAT_CONFIG}.example" "${FORMAT_CONFIG}"
-fi
-"${INTELLIJ}/bin/${FORMATER}" ${FORMATER_ARG} -r -m '*.java' -s "${FORMAT_CONFIG}" "${OUTDIR}" 2>&1 | sed -e '/^IntelliJ/d' -e '/Notification group CodeWithMe is already registered/d' -e 's/\.\.\.OK$//' -e '/^SLF4J:/d'
+. ./scripts/formatter.sh
