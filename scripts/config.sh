@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
 
+if ! [ -z "${VERSION}" ]; then
+	return
+fi
+
 if [ "${0}" = "${BASH_SOURCE}" ]; then
-	exit
+	return
 fi
 
 OLDIFS="${IFS}"
