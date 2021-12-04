@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if ! [ -z "${VERSION}" ]; then
+	return
+fi
+
 if [ "${0}" = "${BASH_SOURCE}" ]; then
 	. "$(dirname "${BASH_SOURCE}")/config.sh" --standalone
 fi
