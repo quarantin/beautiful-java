@@ -5,8 +5,11 @@ if [ "${0}" = "${BASH_SOURCE}" ]; then
 	exit
 fi
 
-IFS="
+OLDIFS="${IFS}"
+NEWIFS="
 "
+IFS="${NEWIFS}"
+
 config_error() {
 	echo "${1}"
 	echo
@@ -166,11 +169,12 @@ fi
 
 CLASSDIR="${REPO}/pz/classes/${VERSION}"
 DECOMPDIR="${REPO}/pz/decompiled/${VERSION}"
+JAVADOCDIR="${REPO}/pz/javadoc/${VERSION}"
 LIBDIR="${REPO}/pz/libs/${VERSION}"
 LUADIR="${REPO}/pz/lua/${VERSION}"
 SOURCEDIR="${REPO}/pz/sources/${VERSION}"
 
 if [ "${1}" = "--clean" ]; then
-	mkdir -p "${LIBDIR}"   "${LUADIR}"   "${CLASSDIR}"   "${SOURCEDIR}"   "${DECOMPDIR}"
-	rm   -rf "${LIBDIR}/"* "${LUADIR}/"* "${CLASSDIR}/"* "${SOURCEDIR}/"* "${DECOMPDIR}/"*
+	mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
+	rm   -rf "${CLASSDIR}/"* "${DECOMPDIR}/"* "${JAVADOCDIR}/"* "${LIBDIR}/"* "${LUADIR}/"* "${SOURCEDIR}/"*
 fi
