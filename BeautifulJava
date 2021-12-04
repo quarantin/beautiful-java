@@ -2,6 +2,14 @@
 set -e
 cd "$(dirname "${BASH_SOURCE}")"
 
+[[ "${@}" == *"--javadoc"* ]] && GENERATE_JAVADOC='yes'
+[[ "${@}" == *"--format-decompiled"* ]] && FORMAT_DECOMPILED='yes'
+
+for ARG; do
+	[[ ! "${ARG}" == '--javadoc' ]] && [[ ! "${ARG}" == '--format-decompiled'  ]] && ARGS+=("${ARG}")
+done
+set -- "${ARGS[@]}"
+
 #
 # Check Zomboid version
 #
@@ -13,24 +21,39 @@ echo "* Found version ${VERSION}"
 # Copy zomboid files
 #
 echo "* Copying Zomboid files..."
-. ./scripts/copyfiles.sh
+copyfiles
 
 #
 # Run IntelliJ decompiler
 #
 echo "* Decompiling class files..."
-. ./scripts/decompile.sh
+decompile
 
 #
 # Run BeautifulJava
 #
 echo
 echo "* Fixing symbols..."
-. ./scripts/beautiful.sh ${@}
+beautiful ${@}
 
 #
 # Run IntelliJ code formatter
 #
 echo
-echo "* Formating source files..."
-. ./scripts/formatter.sh
+echo "* Formatting source files..."
+formatter
+
+if ! [ -z "${FORMAT_DECOMPILED}" ]; then
+	echo
+	echo "* Formatting decompiled files..."
+	formatter "${DECOMPDIR}"
+fi
+
+#
+# Generate Javadoc
+#
+if ! [ -z "${GENERATE_JAVADOC}" ]; then
+	echo
+	echo "* Generating Javadoc..."
+	javadoc
+fi
