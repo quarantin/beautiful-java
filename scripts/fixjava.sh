@@ -17,8 +17,15 @@ sed -i ${BSDSED} \
 	-e 's|<invokedynamic>|/* <invokedynamic> */|' \
 	"${SOURCEDIR}/zombie/characters/IsoPlayer.java"
 
+# BSD sed BRE implementation is broken, so we have to use ERE here.
+# For a testcase see:
+# https://github.com/quarantin/beautiful-java/tree/main/BSDBUG
+#sed -i ${BSDSED} \
+#	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
+#	"${SOURCEDIR}/zombie/Lua/LuaManager.java" \
+#	"${SOURCEDIR}/zombie/network/GameServer.java"
 sed -i ${BSDSED} \
-	-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
+	-E -e 's/\(Object\[\]\)\((.*)\)\)(\[[0-9]\])?;$/new Object[]{ \1 }\2);/' \
 	"${SOURCEDIR}/zombie/Lua/LuaManager.java" \
 	"${SOURCEDIR}/zombie/network/GameServer.java"
 
@@ -26,7 +33,7 @@ sed -i ${BSDSED} \
 FILE="${SOURCEDIR}/zombie/scripting/commands/Lua/LuaCall.java"
 if  [ -f "${FILE}" ]; then
 	sed -i ${BSDSED} \
-		-e 's/(Object\[\])(\(.*\)))\(\[[0-9]\]\)\?;$/new Object[]{ \1 }\2);/' \
+		-E -e 's/\(Object\[\]\)\((.*)\)\)(\[[0-9]\])?;$/new Object[]{ \1 }\2);/' \
 		"${SOURCEDIR}/zombie/scripting/commands/Lua/LuaCall.java"
 fi
 
