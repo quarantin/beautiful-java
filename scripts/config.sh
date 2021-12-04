@@ -146,7 +146,7 @@ fi
 
 
 #
-# Check for Java
+# Check for java command
 #
 JAVA="$(grep -i ^java "${CONFIG}" | cut -f2 -d= | xargs | sed "s|^~|${HOME}|")"
 if ! [ -f "${JAVA}" ]; then
@@ -159,6 +159,7 @@ if ! [ -f "${JAVA}" ]; then
 	fi
 fi
 
+JAVADOC="$(which javadoc || true)"
 FORMATTER="${INTELLIJ}/bin/${FORMATTER}"
 DECOMPILER="${INTELLIJ}/plugins/java-decompiler/lib/java-decompiler.jar"
 DECOMPILER_MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
@@ -178,3 +179,23 @@ if [ "${1}" = "--clean" ]; then
 	mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
 	rm   -rf "${CLASSDIR}/"* "${DECOMPDIR}/"* "${JAVADOCDIR}/"* "${LIBDIR}/"* "${LUADIR}/"* "${SOURCEDIR}/"*
 fi
+
+beautiful() {
+	./scripts/beautiful.sh ${@}
+}
+
+copyfiles() {
+	. ./scripts/copyfiles.sh
+}
+
+decompile() {
+	. ./scripts/decompile.sh
+}
+
+formatter() {
+	. ./scripts/formatter.sh
+}
+
+javadoc() {
+	. ./scripts/javadoc.sh
+}
