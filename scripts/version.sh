@@ -31,3 +31,5 @@ fi
 if [ "${0}" = "${BASH_SOURCE}" ]; then
 	echo $VERSION
 fi
+
+export VERSION

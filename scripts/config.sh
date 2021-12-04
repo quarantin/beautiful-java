@@ -203,3 +203,28 @@ formatter() {
 javadoc() {
 	. ./scripts/javadoc.sh
 }
+
+export IFS
+export NEWIFS
+export OLDIFS
+export CONFIG
+export REPO
+export OS
+export BSDSED
+export PWDOPT
+export LINEFEED
+export PATHSEP
+export INTELLIJ
+export ZOMBOID
+export JAVA
+export JAVADOC
+export JAVADOCDIR
+export CLASSDIR
+export DECOMPDIR
+export DECOMPILER
+export DECOMPILER_MAIN
+export FORMATTER
+export FORMATTER_ARG
+export LIBDIR
+export LUADIR
+export SOURCEDIR
