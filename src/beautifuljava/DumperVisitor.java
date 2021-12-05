@@ -18,8 +18,5 @@ public class DumperVisitor extends VariableVisitor {
 
 		else if (!dumpMissing && !isMissing)
 			setenv(new Symbol(type, null, oldName));
-
-		else
-			throw new RuntimeException("This should never happen!");
 	}
 }
