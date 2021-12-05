@@ -8,9 +8,9 @@ fi
 
 if [ "${0}" = "${BASH_SOURCE}" ]; then
 	. "$(dirname "${BASH_SOURCE}")/config.sh"
+else
+	cp -a "${DECOMPDIR}/"* "${1}"
 fi
-
-cp -a "${DECOMPDIR}/"* "${1}"
 
 . "${REPO}/scripts/fixjava.sh"
 
