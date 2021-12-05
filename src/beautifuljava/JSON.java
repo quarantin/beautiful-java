@@ -80,10 +80,13 @@ public class JSON {
 				Symbol symbol  = new Symbol();
 				symbol.index   = jsonSymbol.getInt("index");
 				symbol.type    = jsonSymbol.getString("type");
-				symbol.oldName = jsonSymbol.getString("old");
-				symbol.newName = jsonSymbol.getString("new");
 
-				//System.out.println("loadEnv " + rootKey + symbol);
+				if (jsonSymbol.has("old"))
+					symbol.oldName = jsonSymbol.getString("old");
+
+				if (jsonSymbol.has("new"))
+					symbol.newName = jsonSymbol.getString("new");
+
 				symbols.add(symbol);
 			}
 
