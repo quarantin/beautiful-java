@@ -33,7 +33,7 @@ decompile
 #
 echo
 echo "* Fixing symbols..."
-beautiful ${@}
+beautiful "${SOURCEDIR}" ${@}
 
 #
 # Run IntelliJ code formatter
