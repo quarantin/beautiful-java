@@ -22,9 +22,12 @@ import com.sun.tools.javac.file.PathFileObject;
 
 public class BeautifulJava {
 
+	public final static String SYMBOLS = "symbols.json";
+
 	private JavacTool javacTool;
 	private JavacFileManager fileManager;
 
+	private File symbolsFile;
 	private String lineEnding;
 	private boolean dumpSymbols;
 	private boolean dumpMissingSymbols;
@@ -48,7 +51,21 @@ public class BeautifulJava {
 
 			else if (option.equals("--dump-missing"))
 				dumpMissingSymbols = true;
+
+			else if (option.startsWith("--symbols=")) {
+				int index = option.indexOf('=');
+				symbolsFile = new File(option.substring(index + 1));
+			}
 		}
+
+		if (symbolsFile == null || !symbolsFile.exists())
+			symbolsFile = getPathToSymbols();
+	}
+
+	private File getPathToSymbols() {
+		File classFile = new File(BeautifulJava.class.getClassLoader().getResource("beautifuljava/BeautifulJava.class").getPath());
+		File repoDir = classFile.getParentFile().getParentFile().getParentFile();
+		return new File(repoDir, SYMBOLS);
 	}
 
 	private static void findFiles(File sourceFile, List<File> sourceFiles) {
@@ -116,14 +133,14 @@ public class BeautifulJava {
 					codeTree.accept(dumper, null);
 
 				//dumper.debugSymbols();
-				dumper.saveSymbols();
+				dumper.saveSymbols(symbolsFile);
 				System.err.println("Done.");
 			}
 			else {
 
 				VariableVisitor variableVisitor = new VariableVisitor();
 				OutputVisitor outputVisitor = new OutputVisitor();
-				outputVisitor.loadSymbols();
+				outputVisitor.loadSymbols(symbolsFile);
 				outputVisitor.setLineEnding(lineEnding);
 
 				for (CompilationUnitTree codeTree : codeResult) {
