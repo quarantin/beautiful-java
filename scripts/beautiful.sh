@@ -14,5 +14,5 @@ cp -a "${DECOMPDIR}/"* "${SOURCEDIR}"
 . "${REPO}/scripts/fixjava.sh"
 
 MAIN=beautifuljava.BeautifulJava 
-CLASSPATH="classes${PATHSEP}lib/*"
+CLASSPATH="${REPO}/classes${PATHSEP}${REPO}/lib/*"
 "${JAVA}" -cp "${CLASSPATH}" "${MAIN}" ${LINEFEED} "${SOURCEDIR}" ${@}
