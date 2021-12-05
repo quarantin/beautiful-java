@@ -178,8 +178,8 @@ LIBDIR="${REPO}/pz/libs/${VERSION}"
 LUADIR="${REPO}/pz/lua/${VERSION}"
 SOURCEDIR="${REPO}/pz/sources/${VERSION}"
 
+mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
 if [ "${1}" = "--clean" ]; then
-	mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
 	rm   -rf "${CLASSDIR}/"* "${DECOMPDIR}/"* "${JAVADOCDIR}/"* "${LIBDIR}/"* "${LUADIR}/"* "${SOURCEDIR}/"*
 fi
 
