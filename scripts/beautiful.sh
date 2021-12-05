@@ -11,7 +11,7 @@ fi
 
 cp -a "${DECOMPDIR}/"* "${SOURCEDIR}"
 
-. "$(dirname ${BASH_SOURCE})/fixjava.sh"
+. "${REPO}/scripts/fixjava.sh"
 
 MAIN=beautifuljava.BeautifulJava 
 CLASSPATH="classes${PATHSEP}lib/*"
