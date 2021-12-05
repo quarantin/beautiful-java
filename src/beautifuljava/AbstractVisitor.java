@@ -27,7 +27,6 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 
 	public final static String DEFAULT_INDENT = "\t";
 	public final static String DEFAULT_LINE_ENDING = "\n";
-	public final static String DEFAULT_SYMBOLS_PATH = "symbols.json";
 
 	private String[] primitiveTypes = new String[] {
 		"boolean",
@@ -45,7 +44,6 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	private PrintStream out;
 
 	private String indent = DEFAULT_INDENT;
-	private String symbolsPath = DEFAULT_SYMBOLS_PATH;
 
 	private Stack<String> packageStack;
 	private Stack<String> classStack;
@@ -118,10 +116,6 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	public void setLineEnding(String nl) {
 		if (nl != null)
 			this.nl = nl;
-	}
-
-	public String getSymbolsPath() {
-		return symbolsPath;
 	}
 
 	public String peekPackage() {
