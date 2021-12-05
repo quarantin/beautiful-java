@@ -55,10 +55,9 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 
 	public AbstractVisitor() {
 		this.packageStack = new Stack<>();
-		this.classStack  = new Stack<>();
+		this.classStack = new Stack<>();
 		this.methodStack = new Stack<>();
 	}
-
 
 	public abstract String getenv(String symbol);
 
@@ -67,7 +66,6 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	public abstract String rgetenv(String symbol);
 
 	public abstract void usetenv(String ascii, String utf8);
-
 
 	protected String obj2str(Object object) {
 		return (object == null ? "" : object.toString());
