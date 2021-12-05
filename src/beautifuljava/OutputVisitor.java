@@ -20,7 +20,7 @@ import com.sun.source.tree.VariableTree;
 public class OutputVisitor extends BaseJavaSourceVisitor {
 
 	private String getClassKeyword(ClassTree classTree) {
-		switch(classTree.getKind()) {
+		switch (classTree.getKind()) {
 
 		case CLASS:
 			return "class ";
@@ -237,7 +237,6 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			output += ";";
 		else
 			output += " " + blockVisitor(blockTree, indent + this.getIndent());
-
 
 		output = replace(output);
 
