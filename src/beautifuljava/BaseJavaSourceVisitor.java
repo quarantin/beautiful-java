@@ -1,5 +1,6 @@
 package beautifuljava;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -61,13 +62,13 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		}
 	}
 
-	public void saveSymbols() throws IOException {
-		JSON.saveSymbolsDB(getSymbolsPath(), symbolsDB);
+	public void saveSymbols(File symbolsFile) throws IOException {
+		JSON.saveSymbolsDB(symbolsFile, symbolsDB);
 	}
 
-	public void loadSymbols() throws IOException {
+	public void loadSymbols(File symbolsFile) throws IOException {
 		symbolsDB.clear();
-		JSON.loadSymbolsDB(getSymbolsPath(), symbolsDB);
+		JSON.loadSymbolsDB(symbolsFile, symbolsDB);
 	}
 
 	private boolean canReplace(String symbol, String output) {
