@@ -13,7 +13,7 @@ TMPDIR="$(mktemp -d)"
 
 cp "${ZOMBOID}/zombie/core/Core.class" "${TMPDIR}"
 
-. ./scripts/decompile.sh "${TMPDIR}" "${TMPDIR}" > /dev/null
+. "${REPO}/scripts/decompile.sh" "${TMPDIR}" "${TMPDIR}" > /dev/null
 
 VERSION="$(grep -o 'new GameVersion(.*' "${TMPDIR}/Core.java" | cut -f2 -d'(' | cut -f1,2 -d',' | sed 's/, /./')"
 if [ -z "${VERSION}" ]; then
@@ -31,5 +31,3 @@ fi
 if [ "${0}" = "${BASH_SOURCE}" ]; then
 	echo $VERSION
 fi
-
-export VERSION
