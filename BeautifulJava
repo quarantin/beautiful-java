@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-cd "$(dirname "${BASH_SOURCE}")"
 
 [[ "${@}" == *"--javadoc"* ]] && GENERATE_JAVADOC='yes'
 [[ "${@}" == *"--format-decompiled"* ]] && FORMAT_DECOMPILED='yes'
@@ -14,7 +13,7 @@ set -- "${ARGS[@]}"
 # Check Zomboid version
 #
 echo "* Checking Zomboid version..."
-. ./scripts/config.sh --clean
+. "$(dirname "${0}")/scripts/config.sh" --clean
 echo "* Found version ${VERSION}"
 
 #
