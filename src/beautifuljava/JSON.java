@@ -14,10 +14,9 @@ import org.json.JSONObject;
 
 public class JSON {
 
-	private static String readFile(String filepath) throws IOException {
-		File file = new File(filepath);
+	private static String readFile(File file) throws IOException {
 		if (!file.exists())
-			throw new FileNotFoundException("File not found: " + filepath);
+			throw new FileNotFoundException("File not found: " + file);
 
 		int filesize = (int)file.length();
 		char[] buf = new char[filesize];
@@ -25,8 +24,8 @@ public class JSON {
 		return new String(buf);
 	}
 
-	private static void writeFile(String filepath, String content) throws IOException {
-		FileWriter writer = new FileWriter(filepath);
+	private static void writeFile(File symbolsFile, String content) throws IOException {
+		FileWriter writer = new FileWriter(symbolsFile);
 		writer.write(content, 0, content.length());
 		writer.close();
 	}
@@ -47,7 +46,7 @@ public class JSON {
 		return jsonSymbol;
 	}
 
-	public static void saveSymbolsDB(String filepath, HashMap<String, Vector<Symbol>> symbolsDB) throws IOException {
+	public static void saveSymbolsDB(File symbolsFile, HashMap<String, Vector<Symbol>> symbolsDB) throws IOException {
 
 		JSONObject result = new JSONObject();
 
@@ -62,12 +61,12 @@ public class JSON {
 			result.put(rootKey, jsonArray);
 		}
 
-		writeFile(filepath, result.toString());
+		writeFile(symbolsFile, result.toString());
 	}
 
-	public static void loadSymbolsDB(String filepath, HashMap<String, Vector<Symbol>> symbolsDB) throws IOException {
+	public static void loadSymbolsDB(File symbolsFile, HashMap<String, Vector<Symbol>> symbolsDB) throws IOException {
 
-		JSONObject rootObject = new JSONObject(readFile(filepath));
+		JSONObject rootObject = new JSONObject(readFile(symbolsFile));
 
 		for (String rootKey : rootObject.keySet()) {
 
