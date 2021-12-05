@@ -114,8 +114,7 @@ fi
 #
 # Check for config.txt
 #
-
-REPO="$(pwd ${PWDOPT})"
+REPO="$(cd "$(dirname "$(dirname "${BASH_SOURCE}")")"; pwd ${PWDOPT})"
 CONFIG="${REPO}/config.txt"
 if ! [ -f "${CONFIG}" ]; then
 	config_error "ERROR: ${CONFIG} not found"
@@ -169,7 +168,7 @@ DECOMPILER="${INTELLIJ}/plugins/java-decompiler/lib/java-decompiler.jar"
 DECOMPILER_MAIN=org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler
 
 if [ "${1}" != "--standalone" ]; then
-	. "$(dirname "${BASH_SOURCE}")/version.sh"
+	. "${REPO}/scripts/version.sh"
 fi
 
 CLASSDIR="${REPO}/pz/classes/${VERSION}"
@@ -185,46 +184,21 @@ if [ "${1}" = "--clean" ]; then
 fi
 
 beautiful() {
-	./scripts/beautiful.sh ${@}
+	. "${REPO}/scripts/beautiful.sh" ${@}
 }
 
 copyfiles() {
-	. ./scripts/copyfiles.sh
+	. "${REPO}/scripts/copyfiles.sh"
 }
 
 decompile() {
-	. ./scripts/decompile.sh
+	. "${REPO}/scripts/decompile.sh"
 }
 
 formatter() {
-	. ./scripts/formatter.sh
+	. "${REPO}/scripts/formatter.sh"
 }
 
 javadoc() {
-	. ./scripts/javadoc.sh
+	. "${REPO}/scripts/javadoc.sh"
 }
-
-export IFS
-export NEWIFS
-export OLDIFS
-export CONFIG
-export REPO
-export OS
-export BSDSED
-export PWDOPT
-export LINEFEED
-export PATHSEP
-export INTELLIJ
-export ZOMBOID
-export JAVA
-export JAVADOC
-export JAVADOCDIR
-export CLASSDIR
-export DECOMPDIR
-export DECOMPILER
-export DECOMPILER_MAIN
-export FORMATTER
-export FORMATTER_ARG
-export LIBDIR
-export LUADIR
-export SOURCEDIR
