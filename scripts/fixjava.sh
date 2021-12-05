@@ -14,7 +14,7 @@ sed -i ${BSDSED} \
 	"${SOURCEDIR}/zombie/ai/states/SwipeStatePlayer.java"
 
 sed -i ${BSDSED} \
-	-e 's|<invokedynamic>|/* <invokedynamic> */|' \
+	-e 's|<invokedynamic>||' \
 	"${SOURCEDIR}/zombie/characters/IsoPlayer.java"
 
 # BSD sed BRE implementation is broken, so we have to use ERE here.
