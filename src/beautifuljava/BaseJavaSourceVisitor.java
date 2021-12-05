@@ -52,7 +52,19 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		symbolsDB.clear();
 	}
 
+	public void debugEnv() {
+		System.err.println("Dumping environment database");
+		for (String key : envDB.keySet()) {
+			System.err.println(key);
+			HashMap<String, Symbol> env = envDB.get(key);
+			for (String symbol : env.keySet())
+				System.err.println(env.get(symbol));
+			System.err.println();
+		}
+	}
+
 	public void debugSymbols() {
+		System.err.println("Dumping symbols database");
 		for (String key : symbolsDB.keySet()) {
 			System.err.println(key);
 			Vector<Symbol> symbols = symbolsDB.get(key);
@@ -69,6 +81,10 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 	public void loadSymbols(File symbolsFile) throws IOException {
 		symbolsDB.clear();
 		JSON.loadSymbolsDB(symbolsFile, symbolsDB);
+	}
+
+	public Vector<Symbol> getSymbols(String envKey) {
+		return symbolsDB.get(envKey);
 	}
 
 	private boolean canReplace(String symbol, String output) {
