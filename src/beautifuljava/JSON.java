@@ -59,7 +59,7 @@ public class JSON {
 			for (Symbol symbol : symbols)
 				jsonArray.put(symbol2json(symbol));
 
-			result.put(rootKey, jsonArray); 
+			result.put(rootKey, jsonArray);
 		}
 
 		writeFile(filepath, result.toString());
