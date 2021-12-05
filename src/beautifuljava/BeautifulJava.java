@@ -151,9 +151,7 @@ public class BeautifulJava {
 					outputFile.renameTo(sourceFile);
 					variableVisitor.clear();
 				}
-
 			}
-
 		}
 		catch (IOException ioerror) {
 			ioerror.printStackTrace();
