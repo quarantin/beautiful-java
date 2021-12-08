@@ -263,7 +263,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			}
 		}
 
-		output += indent.substring(1) + "}";
+		output += indent.substring(getIndent().length()) + "}";
 
 		return output;
 	}
