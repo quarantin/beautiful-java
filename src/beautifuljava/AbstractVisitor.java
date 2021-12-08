@@ -46,6 +46,8 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	private String indent = DEFAULT_INDENT;
 	private String newline = DEFAULT_LINE_ENDING;
 
+	private boolean defaultFormat;
+
 	private Stack<String> packageStack;
 	private Stack<String> classStack;
 	private Stack<String> methodStack;
@@ -99,6 +101,14 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 			return packageStack.peek() + "." + classStack.peek();
 
 		return packageStack.peek() + "." + classStack.peek() + "." + methodStack.peek();
+	}
+
+	public boolean isDefaultFormat() {
+		return this.defaultFormat;
+	}
+
+	public void setDefaultFormat(boolean defaultFormat) {
+		this.defaultFormat = defaultFormat;
 	}
 
 	public String getIndent() {
