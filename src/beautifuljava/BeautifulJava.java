@@ -140,8 +140,9 @@ public class BeautifulJava {
 
 				VariableVisitor variableVisitor = new VariableVisitor();
 				OutputVisitor outputVisitor = new OutputVisitor();
-				outputVisitor.loadSymbols(symbolsFile);
 				outputVisitor.setLineEnding(lineEnding);
+				if (symbolsFile.exists())
+					outputVisitor.loadSymbols(symbolsFile);
 
 				for (CompilationUnitTree codeTree : codeResult) {
 
