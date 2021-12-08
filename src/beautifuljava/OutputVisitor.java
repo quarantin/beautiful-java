@@ -19,6 +19,15 @@ import com.sun.source.tree.VariableTree;
 
 public class OutputVisitor extends BaseJavaSourceVisitor {
 
+	private boolean needNewline;
+
+	private void printNewlineIfNeeded() {
+		if (needNewline) {
+			needNewline = false;
+			print(getLineEnding());
+		}
+	}
+
 	private String getClassKeyword(ClassTree classTree) {
 		switch (classTree.getKind()) {
 
@@ -79,6 +88,8 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
 
+		printNewlineIfNeeded();
+
 		String output = getLineEnding() + indent + modifiers + classKeyword + simpleName + typeParameters;
 
 		String extendsClause = obj2str(classTree.getExtendsClause());
@@ -100,15 +111,20 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			switch (memberTree.getKind()) {
 
 			case BLOCK:
-				print(blockVisitor((BlockTree)memberTree, indent + getIndent()));
+				printNewlineIfNeeded();
+				print(indent + getIndent() + blockVisitor((BlockTree)memberTree, indent + getIndent()));
+				needNewline = true;
 				break;
 
 			case METHOD:
+				printNewlineIfNeeded();
 				print(methodVisitor((MethodTree)memberTree, indent + getIndent()) + getLineEnding());
+				needNewline = true;
 				break;
 
 			case VARIABLE:
 				print(variableVisitor((VariableTree)memberTree, indent + getIndent()));
+				needNewline = true;
 				break;
 			}
 		}
@@ -206,7 +222,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			paramList.add(type + " " + oldName);
 		}
 
-		String output = getLineEnding();
+		String output = "";
 		if (methodName.equals("<init>")) {
 			methodName = peekClass();
 			output += indent + modifier + methodName + "(";
@@ -247,6 +263,23 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		return output;
 	}
 
+	public String blockVisitorHelper(StatementTree statementTree, String indent) {
+
+		String output = "";
+		String[] lines = statementTree.toString().split(getLineEnding());
+
+		for (int i = 0; i < lines.length; i++) {
+			output += indent + lines[i].replace("    ", getIndent()) + getLineEnding();
+			String cleanLine = lines[i].strip();
+			if (i < lines.length - 1 && cleanLine.startsWith("}") && !cleanLine.endsWith("{") && !lines[i + 1].strip().startsWith("}"))
+				output += getLineEnding();
+		}
+
+		output = output.replaceAll("}[ ][ ]+", "} ");
+
+		return output;
+	}
+
 	public String blockVisitor(BlockTree blockTree, String indent) {
 
 		String staticStr = blockTree.isStatic() ? "static " : "";
@@ -256,17 +289,34 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		for (StatementTree statementTree : blockTree.getStatements()) {
 
+			if (needNewline) {
+				needNewline = false;
+				output += getLineEnding();
+			}
+
 			switch (statementTree.getKind()) {
 
 			case VARIABLE:
 				output += indent + obj2str(statementTree) + ";" + getLineEnding();
 				break;
 
+			case BLOCK:
+			case DO_WHILE_LOOP:
+			case FOR_LOOP:
+			case IF:
+			case TRY:
+			case WHILE_LOOP:
+				output += blockVisitorHelper(statementTree, indent);
+				needNewline = true;
+				break;
+
 			default:
-				output += indent + obj2str(statementTree) + getLineEnding();
+				output += blockVisitorHelper(statementTree, indent);
 				break;
 			}
 		}
+
+		needNewline = false;
 
 		output += indent.substring(getIndent().length()) + "}";
 
