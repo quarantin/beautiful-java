@@ -1,31 +1,27 @@
 package beautifuljava;
 
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.util.JavacTask;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.nio.charset.Charset;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
-
-import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.util.JavacTask;
-import com.sun.tools.javac.api.JavacTool;
-import com.sun.tools.javac.file.JavacFileManager;
-import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.file.PathFileObject;
-
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 public class BeautifulJava {
 
 	public final static String SYMBOLS = "symbols.json";
 
-	private JavacTool javacTool;
-	private JavacFileManager fileManager;
+	private JavaCompiler compiler;
+	private StandardJavaFileManager fileManager;
 
 	private File symbolsFile;
 	private String lineEnding;
@@ -34,9 +30,8 @@ public class BeautifulJava {
 
 	@SuppressWarnings("deprecation")
 	public BeautifulJava(List<String> options) {
-		Context context = new Context();
-		fileManager = new JavacFileManager(context, true, Charset.forName("UTF-8"));
-		javacTool = new JavacTool();
+		compiler = ToolProvider.getSystemJavaCompiler();
+		fileManager = compiler.getStandardFileManager(null, null, null);
 
 		for (String option : options) {
 
@@ -110,13 +105,13 @@ public class BeautifulJava {
 	}
 
 	private String getSourcePath(CompilationUnitTree codeTree) {
-		return ((PathFileObject)codeTree.getSourceFile()).getPath().toString();
+		return codeTree.getSourceFile().toUri().getPath().toString();
 	}
 
 	private void parseJavaSourceFile(List<File> sourceFiles) {
 
 		Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjectsFromFiles((Iterable<File>)sourceFiles);
-		JavacTask javacTask = (JavacTask)javacTool.getTask(null, fileManager, null, null, null, javaFiles);
+		JavacTask javacTask = (JavacTask)compiler.getTask(null, fileManager, null, null, null, javaFiles);
 
 		try {
 

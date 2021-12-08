@@ -16,4 +16,4 @@ fi
 
 MAIN=beautifuljava.BeautifulJava 
 CLASSPATH="${REPO}/classes${PATHSEP}${REPO}/lib/*"
-"${JAVA}" -cp "${CLASSPATH}" "${MAIN}" ${LINEFEED} ${@}
+"${JAVA}" -cp "${CLASSPATH}" -Dfile.encoding=UTF-8 "${MAIN}" ${LINEFEED} ${@}
