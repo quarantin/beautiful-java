@@ -25,7 +25,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		case CLASS:
 			return "class ";
 
-		case INTERFACE: // Already part of the modifiers
+		case INTERFACE:
 			return "interface ";
 
 		case ANNOTATION_TYPE:
@@ -62,7 +62,6 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (simpleName.equals(""))
 			return super.visitClass(classTree, indent);
 
-		//System.err.println("DEBUG: PUSH class = " + simpleName);
 		pushClass(simpleName);
 
 		if (classTree.getKind().equals(Tree.Kind.ENUM)) {
@@ -113,7 +112,6 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		print(indent + "}" + this.nl);
 
-		//System.err.println("DEBUG: POP class = " + simpleName);
 		popClass();
 
 		return result;
