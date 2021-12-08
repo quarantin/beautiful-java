@@ -1,11 +1,14 @@
 #!/bin/bash
 set -e
 
-[[ "${@}" == *"--javadoc"* ]] && GENERATE_JAVADOC='yes'
-[[ "${@}" == *"--format-decompiled"* ]] && FORMAT_DECOMPILED='yes'
+[[ "${@}" == *"--javadoc"*       ]] && GENERATE_JAVADOC='yes'
+[[ "${@}" == *"--format-input"*  ]] && FORMAT_INPUT='yes'
+[[ "${@}" == *"--format-output"* ]] && FORMAT_OUTPUT='yes'
 
 for ARG; do
-	[[ ! "${ARG}" == '--javadoc' ]] && [[ ! "${ARG}" == '--format-decompiled'  ]] && ARGS+=("${ARG}")
+	[[ ! "${ARG}" == '--javadoc'        ]] && \
+	[[ ! "${ARG}" == '--format-input'   ]] && \
+	[[ ! "${ARG}" == '--format-output'  ]] && ARGS+=("${ARG}")
 done
 set -- "${ARGS[@]}"
 
@@ -38,14 +41,18 @@ beautiful "${SOURCEDIR}" ${@}
 #
 # Run IntelliJ code formatter
 #
-echo
-echo "* Formatting source files..."
-formatter
+if [ "${FORMAT_INPUT}" = "yes" ]; then
 
-if ! [ -z "${FORMAT_DECOMPILED}" ]; then
 	echo
 	echo "* Formatting decompiled files..."
 	formatter "${DECOMPDIR}"
+fi
+
+
+if [ "${FORMAT_OUTPUT}" = "yes" ]; then
+	echo
+	echo "* Formatting source files..."
+	formatter "${SOURCEDIR}"
 fi
 
 #
