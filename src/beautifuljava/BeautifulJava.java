@@ -18,15 +18,22 @@ import javax.tools.ToolProvider;
 
 public class BeautifulJava {
 
+	public final static String VALID   = "valid-symbols.json";
+	public final static String MISSING = "missing-symbols.json";
 	public final static String SYMBOLS = "symbols.json";
 
 	private JavaCompiler compiler;
 	private StandardJavaFileManager fileManager;
 
+	private String lineEnding = "\n";
+
 	private File symbolsFile;
-	private String lineEnding;
-	private boolean dumpSymbols;
+	private File validSymbolsFile;
+	private File missingSymbolsFile;
+
+	private boolean dumpValidSymbols;
 	private boolean dumpMissingSymbols;
+	private boolean resolveSymbols;
 
 	@SuppressWarnings("deprecation")
 	public BeautifulJava(List<String> options) {
@@ -41,26 +48,32 @@ public class BeautifulJava {
 			else if (option.equals("--crlf"))
 				lineEnding = "\r\n";
 
-			else if (option.equals("--dump"))
-				dumpSymbols = true;
-
 			else if (option.equals("--dump-missing"))
 				dumpMissingSymbols = true;
 
-			else if (option.startsWith("--symbols=")) {
-				int index = option.indexOf('=');
-				symbolsFile = new File(option.substring(index + 1));
-			}
+			else if (option.equals("--dump-valid"))
+				dumpValidSymbols = true;
+
+			else if (option.equals("--resolve"))
+				resolveSymbols = true;
+
+			else if (option.startsWith("--"))
+				throw new RuntimeException("Invalid command line option: " + option);
 		}
 
-		if (symbolsFile == null || !symbolsFile.exists())
-			symbolsFile = getPathToSymbols();
+		symbolsFile = getFile(SYMBOLS);
+		validSymbolsFile = getFile(VALID);
+		missingSymbolsFile = getFile(MISSING);
+		if ((resolveSymbols || dumpValidSymbols) && !missingSymbolsFile.exists())
+			throw new RuntimeException("Can't find missing symbols file. Run program with option --dump-missing first.");
+
+		// TODO check validSymbolsFile exists for resolveSymbols
 	}
 
-	private File getPathToSymbols() {
+	private File getFile(String fileName) {
 		File classFile = new File(BeautifulJava.class.getClassLoader().getResource("beautifuljava/BeautifulJava.class").getPath());
 		File repoDir = classFile.getParentFile().getParentFile().getParentFile();
-		return new File(repoDir, SYMBOLS);
+		return new File(repoDir, fileName);
 	}
 
 	private static void findFiles(File sourceFile, List<File> sourceFiles) {
@@ -77,10 +90,6 @@ public class BeautifulJava {
 	}
 
 	public static void main(String[] args) {
-
-		String lineEnding = null;
-		boolean dumpSymbols = false;
-		boolean dumpMissingSymbols = false;
 
 		if (args.length == 0) {
 			System.out.println("Usage: BeautifulJava [Java source files]");
@@ -117,23 +126,35 @@ public class BeautifulJava {
 
 			Iterable<? extends CompilationUnitTree> codeResult = javacTask.parse();
 
-			if (dumpSymbols) {
+			if (dumpMissingSymbols) {
 
-				String message = dumpMissingSymbols ? "missing" : "valid";
-				System.err.println("Dumping " + message + " symbols...");
+				System.err.println("Dumping missing symbols...");
+				DumpMissingVisitor dumper = new DumpMissingVisitor();
 
-				DumperVisitor dumper = new DumperVisitor(dumpMissingSymbols);
-				//dumper.setDebug(true);
 				for (CompilationUnitTree codeTree : codeResult)
 					codeTree.accept(dumper, null);
 
-				//dumper.debugSymbols();
-				dumper.saveSymbols(symbolsFile);
-				System.err.println("Done.");
+				dumper.saveSymbols(missingSymbolsFile);
+				System.err.println("OK");
+			}
+			else if (dumpValidSymbols) {
+
+				System.err.println("Dumping valid symbols...");
+				DumpValidVisitor dumper = new DumpValidVisitor(missingSymbolsFile);
+
+				for (CompilationUnitTree codeTree : codeResult)
+					codeTree.accept(dumper, null);
+
+				dumper.saveSymbols(validSymbolsFile);
+				System.err.println("OK");
+			}
+			else if (resolveSymbols) {
+
+				// TODO
 			}
 			else {
 
-				VariableVisitor variableVisitor = new VariableVisitor();
+				//VariableVisitor variableVisitor = new VariableVisitor();
 				OutputVisitor outputVisitor = new OutputVisitor();
 				outputVisitor.setLineEnding(lineEnding);
 				if (symbolsFile.exists())
@@ -144,25 +165,21 @@ public class BeautifulJava {
 					String sourcePath = getSourcePath(codeTree);
 					System.out.println("Fixing " + sourcePath);
 
-					codeTree.accept(variableVisitor, null);
-
-					//variableVisitor.debugSymbols();
+					//codeTree.accept(variableVisitor, null);
 
 					File sourceFile = new File(sourcePath);
 					File outputFile = new File(sourcePath + ".fixed");
-
 					PrintStream out = new PrintStream(new FileOutputStream(outputFile));
 
 					outputVisitor.setOut(out);
-					outputVisitor.copy(variableVisitor);
-					//outputVisitor.debugSymbols();
+					//outputVisitor.copy(variableVisitor);
 
 					codeTree.accept(outputVisitor, "");
 
 					out.close();
 					sourceFile.delete();
 					outputFile.renameTo(sourceFile);
-					variableVisitor.clear();
+					//variableVisitor.clear();
 				}
 			}
 		}

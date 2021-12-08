@@ -87,7 +87,14 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 		this.debug = debug;
 	}
 
+	public void debugStack(Stack<String> stack) {
+		System.err.println(stack);
+	}
+
 	public String getEnvKey() {
+
+		String className;
+		String packageName;
 
 		if (packageStack.empty())
 			throw new RuntimeException("This should never happen!");
@@ -96,9 +103,9 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 			throw new RuntimeException("This should never happen!");
 
 		if (methodStack.empty())
-			return packageStack.peek() + "." + classStack.peek();
+			return peekPackage() + "|" + peekClass();
 
-		return packageStack.peek() + "." + classStack.peek() + "." + methodStack.peek();
+		return peekPackage() + "|" + peekClass() + "|" + methodStack.peek();
 	}
 
 	public String getIndent() {
@@ -123,10 +130,12 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	}
 
 	public void popPackage() {
+		dprintln("POP package " + peekPackage());
 		packageStack.pop();
 	}
 
 	public void pushPackage(String packageName) {
+		dprintln("PUSH package " + packageName);
 		packageStack.push(packageName);
 	}
 
@@ -135,12 +144,12 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	}
 
 	public void popClass() {
-		//dprintln("POP class: " + peekClass());
+		dprintln("POP class" + peekClass());
 		classStack.pop();
 	}
 
 	public void pushClass(String className) {
-		//dprintln("PUSH class: " + className);
+		dprintln("PUSH class: " + className);
 		classStack.push(className);
 	}
 
@@ -153,12 +162,12 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	}
 
 	public void popMethod() {
-		//dprintln("POP method: " + peekMethod());
+		dprintln("POP method: " + peekMethod());
 		methodStack.pop();
 	}
 
 	public void pushMethod(String method) {
-		//dprintln("PUSH method: " + method);
+		dprintln("PUSH method: " + method);
 		methodStack.push(method);
 	}
 

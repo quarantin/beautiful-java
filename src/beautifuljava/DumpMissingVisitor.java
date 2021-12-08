@@ -1,22 +1,9 @@
 package beautifuljava;
 
-public class DumperVisitor extends VariableVisitor {
+public class DumpMissingVisitor extends VariableVisitor {
 
-	private boolean dumpMissing;
-
-	public DumperVisitor(boolean dumpMissing) {
-		super();
-		this.dumpMissing = dumpMissing;
-	}
-
-	public void substitute(String oldName, String type) {
-
-		boolean isMissing = isMissingSymbol(oldName);
-
-		if (dumpMissing && isMissing)
-			setenv(new Symbol(type, oldName, null));
-
-		else if (!dumpMissing && !isMissing)
-			setenv(new Symbol(type, null, oldName));
+	public void substitute(String name, String type) {
+		if (isMissingSymbol(name))
+			setenv(new Symbol(type, name, null));
 	}
 }

@@ -28,6 +28,7 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 	private HashMap<String, HashMap<String, Symbol>> envDB;
 	private HashMap<String, HashMap<String, Symbol>> renvDB;
 	private HashMap<String, Vector<Symbol>> symbolsDB;
+	private HashMap<String, Vector<Symbol>> missingSymbolsDB;
 	private HashMap<String, HashMap<String, String>> unicodeDB;
 
 	public BaseJavaSourceVisitor() {
@@ -38,11 +39,19 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		this.unicodeDB = new HashMap<>();
 	}
 
+	public BaseJavaSourceVisitor(File missingSymbolsFile) throws IOException {
+		this();
+		this.missingSymbolsDB = new HashMap<>();
+
+		JSON.loadSymbolsDB(missingSymbolsFile, missingSymbolsDB);
+	}
+
 	public void copy(BaseJavaSourceVisitor bjsv) {
 		this.envDB     = bjsv.envDB;
 		this.renvDB    = bjsv.renvDB;
 		this.symbolsDB = bjsv.symbolsDB;
 		this.unicodeDB = bjsv.unicodeDB;
+		missingSymbolsDB = bjsv.missingSymbolsDB;
 	}
 
 	public void clear() {
@@ -52,7 +61,7 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		symbolsDB.clear();
 	}
 
-	public void debugEnv() {
+	public void debugEnv(HashMap<String, HashMap<String, Symbol>> envDB) {
 		System.err.println("Dumping environment database");
 		for (String key : envDB.keySet()) {
 			System.err.println(key);
@@ -63,7 +72,11 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		}
 	}
 
-	public void debugSymbols() {
+	public void debugEnv() {
+		debugEnv(envDB);
+	}
+
+	public void debugSymbols(HashMap<String, Vector<Symbol>> symbolsDB) {
 		System.err.println("Dumping symbols database");
 		for (String key : symbolsDB.keySet()) {
 			System.err.println(key);
@@ -74,14 +87,70 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		}
 	}
 
+	public void debugSymbols() {
+		debugSymbols(symbolsDB);
+	}
+
 	public void saveSymbols(File symbolsFile) throws IOException {
 		JSON.saveSymbolsDB(symbolsFile, symbolsDB);
 	}
 
 	public void loadSymbols(File symbolsFile) throws IOException {
+		envDB.clear();
+		renvDB.clear();
 		symbolsDB.clear();
-		JSON.loadSymbolsDB(symbolsFile, symbolsDB);
+
+		HashMap<String, Vector<Symbol>> validSymbolsDB = new HashMap<>();
+
+		JSON.loadSymbolsDB(symbolsFile, validSymbolsDB);
+
+		for (String envKey : validSymbolsDB.keySet()) {
+
+			Vector<Symbol> symbols = validSymbolsDB.get(envKey);
+
+			for (Symbol symbol : symbols) {
+				if (symbol.oldName != null)
+					setenv(symbol, envKey);
+			}
+		}
 	}
+
+	/*
+	public void loadSymbols(File symbolsFile) throws IOException {
+		envDB.clear();
+		renvDB.clear();
+		symbolsDB.clear();
+
+		HashMap<String, Vector<Symbol>> validSymbolsDB = new HashMap<>();
+
+		JSON.loadSymbolsDB(symbolsFile, validSymbolsDB);
+
+		for (String envKey : validSymbolsDB.keySet()) {
+
+			String[] tokens = envKey.split("|");
+
+			if (tokens.length > 0)
+				pushPackage(tokens[0]);
+
+			if (tokens.length > 1)
+				pushClass(tokens[1]);
+
+			if (tokens.length > 3)
+				pushMethod(tokens[2]);
+
+			Vector<Symbol> symbols = validSymbolsDB.get(envKey);
+
+			for (Symbol symbol : symbols) {
+				if (symbol.oldName != null)
+					setenv(symbol);
+			}
+
+			popMethod();
+			popClass();
+			popPackage();
+		}
+	}
+	*/
 
 	public Vector<Symbol> getSymbols(String envKey) {
 		return symbolsDB.get(envKey);
@@ -131,6 +200,19 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		return output;
 	}
 
+	public Symbol getMissingSymbol(String envKey, int index) {
+
+		Vector<Symbol> symbols = missingSymbolsDB.get(envKey);
+
+		if (symbols == null)
+			return null;
+
+		if (symbols.size() <= index)
+			return null;
+
+		return symbols.get(index);
+	}
+
 	public String getenv(String name) {
 
 		HashMap<String, Symbol> env = envDB.get(getEnvKey());
@@ -157,9 +239,8 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		return symbol.oldName;
 	}
 
-	public void setenv(Symbol symbol) {
+	public void setenv(Symbol symbol, String envKey) {
 
-		String envKey = getEnvKey();
 		HashMap<String, Symbol> env = envDB.get(envKey);
 		HashMap<String, Symbol> renv = renvDB.get(envKey);
 		Vector<Symbol> symbols = symbolsDB.get(envKey);
@@ -177,6 +258,10 @@ public class BaseJavaSourceVisitor extends AbstractVisitor {
 		env.put(symbol.oldName, symbol);
 		renv.put(symbol.newName, symbol);
 		symbols.add(symbol);
+
+	}
+	public void setenv(Symbol symbol) {
+		setenv(symbol, getEnvKey());
 	}
 
 	public void usetenv(String ascii, String utf8) {

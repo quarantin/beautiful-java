@@ -277,6 +277,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		String type = obj2str(variableTree.getType());
 
 		String output = indent + modifiers + type + " " + name;
+		dprintln("VARIABLE VISITOR: " + output);
 		if (!initializer.equals("")) {
 			output += " = " + initializer;
 		}

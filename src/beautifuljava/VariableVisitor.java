@@ -1,5 +1,6 @@
 package beautifuljava;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -15,6 +16,14 @@ import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.VariableTree;
 
 public class VariableVisitor extends BaseJavaSourceVisitor {
+
+	public VariableVisitor() {
+		super();
+	}
+
+	public VariableVisitor(File missingSymbolsFile) throws IOException {
+		super(missingSymbolsFile);
+	}
 
 	public void substitute(String oldName, String type) {
 
