@@ -21,7 +21,7 @@ fi
 FILE="${SOURCEDIR}/zombie/characters/IsoPlayer.java"
 if [ -f "${FILE}" ]; then
 	sed -i ${BSDSED} \
-		-e 's|<invokedynamic>||' \
+		-e 's|[ ]*<[ ]*invokedynamic[ ]*>[ ]*||' \
 		"${FILE}"
 else
 	echo "File not found: ${FILE}"
