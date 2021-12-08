@@ -58,6 +58,11 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 	@Override
 	public String visitClass(ClassTree classTree, String indent) {
 
+		if (isDefaultFormat()) {
+			print(classTree.toString());
+			return null;
+		}
+
 		String simpleName = obj2str(classTree.getSimpleName());
 		if (simpleName.equals(""))
 			return super.visitClass(classTree, indent);
