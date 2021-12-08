@@ -44,12 +44,12 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	private PrintStream out;
 
 	private String indent = DEFAULT_INDENT;
+	private String newline = DEFAULT_LINE_ENDING;
 
 	private Stack<String> packageStack;
 	private Stack<String> classStack;
 	private Stack<String> methodStack;
 
-	protected String nl = DEFAULT_LINE_ENDING;
 
 	public AbstractVisitor() {
 		this.packageStack = new Stack<>();
@@ -113,9 +113,13 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 		this.out = out;
 	}
 
-	public void setLineEnding(String nl) {
-		if (nl != null)
-			this.nl = nl;
+	public String getLineEnding() {
+		return this.newline;
+	}
+
+	public void setLineEnding(String newline) {
+		if (newline != null)
+			this.newline = newline;
 	}
 
 	public String peekPackage() {
