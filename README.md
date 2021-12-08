@@ -67,9 +67,9 @@ To run BeautifulJava, type the following commands and wait for the script to fin
 	cd "${HOME}/beautiful-java/"
 	./BeautifulJava
 
-Once the script has finished, the Java source files should be available in this folder:
+Once the script has finished running, the Java source files should be available in this folder:
 
-	${HOME}/beautiful-java/pz/sources/
+	${HOME}/beautiful-java/pz/
 
 ## Updating BeautifulJava
 Updating BeautifulJava is done as follow:

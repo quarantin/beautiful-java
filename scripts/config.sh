@@ -171,12 +171,12 @@ if [ "${1}" != "--standalone" ]; then
 	. "${REPO}/scripts/version.sh"
 fi
 
-CLASSDIR="${REPO}/pz/classes/${VERSION}"
-DECOMPDIR="${REPO}/pz/decompiled/${VERSION}"
-JAVADOCDIR="${REPO}/pz/javadoc/${VERSION}"
-LIBDIR="${REPO}/pz/libs/${VERSION}"
-LUADIR="${REPO}/pz/lua/${VERSION}"
-SOURCEDIR="${REPO}/pz/sources/${VERSION}"
+CLASSDIR="${REPO}/pz/${VERSION}/classes"
+DECOMPDIR="${REPO}/pz/${VERSION}/decompiled"
+JAVADOCDIR="${REPO}/pz/${VERSION}/javadoc"
+LIBDIR="${REPO}/pz/${VERSION}/libs"
+LUADIR="${REPO}/pz/${VERSION}/lua"
+SOURCEDIR="${REPO}/pz/${VERSION}/sources"
 
 mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
 if [ "${1}" = "--clean" ]; then
