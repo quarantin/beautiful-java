@@ -95,15 +95,15 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			switch (memberTree.getKind()) {
 
 			case BLOCK:
-				print(blockVisitor((BlockTree)memberTree, indent + this.getIndent()));
+				print(blockVisitor((BlockTree)memberTree, indent + getIndent()));
 				break;
 
 			case METHOD:
-				print(methodVisitor((MethodTree)memberTree, indent + this.getIndent()) + getLineEnding());
+				print(methodVisitor((MethodTree)memberTree, indent + getIndent()) + getLineEnding());
 				break;
 
 			case VARIABLE:
-				print(variableVisitor((VariableTree)memberTree, indent + this.getIndent()));
+				print(variableVisitor((VariableTree)memberTree, indent + getIndent()));
 				break;
 			}
 		}
@@ -149,11 +149,11 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			switch (memberTree.getKind()) {
 
 			case BLOCK:
-				blocks.add(blockVisitor((BlockTree)memberTree, indent + this.getIndent()));
+				blocks.add(blockVisitor((BlockTree)memberTree, indent + getIndent()));
 				break;
 
 			case METHOD:
-				methods.add(methodVisitor((MethodTree)memberTree, indent + this.getIndent()));
+				methods.add(methodVisitor((MethodTree)memberTree, indent + getIndent()));
 				break;
 
 			case VARIABLE:
@@ -234,7 +234,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (blockTree == null)
 			output += ";";
 		else
-			output += " " + blockVisitor(blockTree, indent + this.getIndent());
+			output += " " + blockVisitor(blockTree, indent + getIndent());
 
 		output = replace(output);
 
