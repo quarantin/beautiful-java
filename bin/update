@@ -1,10 +1,16 @@
 #!/bin/bash
 
-BRANCH="$(git name-rev --name-only HEAD)"
+CURRENT_BRANCH="$(git name-rev --name-only HEAD)"
+
+BRANCH="${CURRENT_BRANCH}"
 if ! [ -z "${1}" ]; then
 	BRANCH="${1}"
 fi
 
+if [ "${BRANCH}" != "${CURRENT_BRANCH}" ]; then
+	git checkout "${BRANCH}"
+fi
+
 git fetch
-git checkout "${BRANCH}"
+
 git reset --hard "origin/${BRANCH}"
