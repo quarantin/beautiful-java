@@ -43,15 +43,15 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		pushPackage(packageName);
 
 		for (AnnotationTree annotationTree : packageTree.getAnnotations())
-			print(annotationTree.toString() + this.nl);
+			print(annotationTree.toString() + getLineEnding());
 
-		print("package " + packageName + ";" + this.nl + this.nl);
+		print("package " + packageName + ";" + getLineEnding() + getLineEnding());
 		return super.visitPackage(packageTree, indent);
 	}
 
 	@Override
 	public String visitImport(ImportTree importTree, String indent) {
-		print("import " + importTree.getQualifiedIdentifier() + ";" + this.nl);
+		print("import " + importTree.getQualifiedIdentifier() + ";" + getLineEnding());
 		return super.visitImport(importTree, indent);
 	}
 
@@ -74,7 +74,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
 
-		String output = this.nl + indent + modifiers + classKeyword + simpleName + typeParameters;
+		String output = getLineEnding() + indent + modifiers + classKeyword + simpleName + typeParameters;
 
 		String extendsClause = obj2str(classTree.getExtendsClause());
 		if (!extendsClause.equals("")) {
@@ -87,7 +87,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			output += " " + implementsKeyword + " " + implementsClause;
 		}
 
-		output += " {" + this.nl;
+		output += " {" + getLineEnding();
 
 		print(output);
 
@@ -99,7 +99,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 				break;
 
 			case METHOD:
-				print(methodVisitor((MethodTree)memberTree, indent + this.getIndent()) + this.nl);
+				print(methodVisitor((MethodTree)memberTree, indent + this.getIndent()) + getLineEnding());
 				break;
 
 			case VARIABLE:
@@ -110,7 +110,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		String result = super.visitClass(classTree, indent);
 
-		print(indent + "}" + this.nl);
+		print(indent + "}" + getLineEnding());
 
 		popClass();
 
@@ -133,13 +133,13 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (!obj2str(classTree.getTypeParameters()).equals(""))
 			throw new RuntimeException("Found enum with type parameters!");
 
-		String output = this.nl + indent + modifiers + "enum " + simpleName;
+		String output = getLineEnding() + indent + modifiers + "enum " + simpleName;
 
 		if (!implementsClause.equals("")) {
 			output += " implements " + implementsClause;
 		}
 
-		output += " {" + this.nl;
+		output += " {" + getLineEnding();
 
 		ArrayList<String> blocks = new ArrayList<>();
 		ArrayList<String> methods = new ArrayList<>();
@@ -162,25 +162,25 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			}
 		}
 
-		output += indent + String.join("," + this.nl, variables) + ";";
+		output += indent + String.join("," + getLineEnding(), variables) + ";";
 
 		if (blocks.size() > 0) {
 
-			output += this.nl;
+			output += getLineEnding();
 
 			for (String block : blocks)
-				output += block + this.nl;
+				output += block + getLineEnding();
 		}
 
 		if (methods.size() > 0) {
 
-			output += this.nl;
+			output += getLineEnding();
 
 			for (String method : methods)
-				output += method + this.nl;
+				output += method + getLineEnding();
 		}
 
-		output += "}" + this.nl;
+		output += "}" + getLineEnding();
 
 		return output;
 	}
@@ -201,7 +201,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			paramList.add(type + " " + oldName);
 		}
 
-		String output = this.nl;
+		String output = getLineEnding();
 		if (methodName.equals("<init>")) {
 			methodName = peekClass();
 			output += indent + modifier + methodName + "(";
@@ -247,18 +247,18 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		String staticStr = blockTree.isStatic() ? "static " : "";
 		List<String> statementsList = new ArrayList<>();
 
-		String output = staticStr + "{" + this.nl;
+		String output = staticStr + "{" + getLineEnding();
 
 		for (StatementTree statementTree : blockTree.getStatements()) {
 
 			switch (statementTree.getKind()) {
 
 			case VARIABLE:
-				output += indent + obj2str(statementTree) + ";" + this.nl;
+				output += indent + obj2str(statementTree) + ";" + getLineEnding();
 				break;
 
 			default:
-				output += indent + obj2str(statementTree) + this.nl;
+				output += indent + obj2str(statementTree) + getLineEnding();
 				break;
 			}
 		}
@@ -279,7 +279,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			output += " = " + initializer;
 		}
 
-		output += ";" + this.nl;
+		output += ";" + getLineEnding();
 
 		return output;
 	}
