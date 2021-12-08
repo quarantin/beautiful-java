@@ -24,9 +24,11 @@ public class BeautifulJava {
 	private StandardJavaFileManager fileManager;
 
 	private File symbolsFile;
+	private String indent;
 	private String lineEnding;
 	private boolean dumpSymbols;
 	private boolean dumpMissingSymbols;
+	private boolean keepOriginalFile;
 
 	@SuppressWarnings("deprecation")
 	public BeautifulJava(List<String> options) {
@@ -46,6 +48,14 @@ public class BeautifulJava {
 
 			else if (option.equals("--dump-missing"))
 				dumpMissingSymbols = true;
+
+			else if (option.startsWith("--indent=")) {
+				int index = option.indexOf("=");
+				indent = option.substring(index + 1);
+			}
+
+			else if (option.equals("--no-replace"))
+				keepOriginalFile = true;
 
 			else if (option.startsWith("--symbols=")) {
 				int index = option.indexOf('=');
@@ -136,6 +146,9 @@ public class BeautifulJava {
 				VariableVisitor variableVisitor = new VariableVisitor();
 				OutputVisitor outputVisitor = new OutputVisitor();
 				outputVisitor.setLineEnding(lineEnding);
+				if (indent != null)
+					outputVisitor.setIndent(indent);
+
 				if (symbolsFile.exists())
 					outputVisitor.loadSymbols(symbolsFile);
 
@@ -160,9 +173,12 @@ public class BeautifulJava {
 					codeTree.accept(outputVisitor, "");
 
 					out.close();
-					sourceFile.delete();
-					outputFile.renameTo(sourceFile);
 					variableVisitor.clear();
+
+					if (!keepOriginalFile) {
+						sourceFile.delete();
+						outputFile.renameTo(sourceFile);
+					}
 				}
 			}
 		}
