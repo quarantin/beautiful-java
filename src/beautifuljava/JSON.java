@@ -1,7 +1,6 @@
 package beautifuljava;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,9 +14,6 @@ import org.json.JSONObject;
 public class JSON {
 
 	private static String readFile(File file) throws IOException {
-		if (!file.exists())
-			throw new FileNotFoundException("File not found: " + file);
-
 		int filesize = (int)file.length();
 		char[] buf = new char[filesize];
 		new FileReader(file).read(buf, 0, filesize);
