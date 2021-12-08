@@ -26,6 +26,7 @@ public class BeautifulJava {
 	private File symbolsFile;
 	private String indent;
 	private String lineEnding;
+	private boolean defaultFormat;
 	private boolean dumpSymbols;
 	private boolean dumpMissingSymbols;
 	private boolean keepOriginalFile;
@@ -42,6 +43,9 @@ public class BeautifulJava {
 
 			else if (option.equals("--crlf"))
 				lineEnding = "\r\n";
+
+			else if (option.equals("--default-format"))
+				defaultFormat = true;
 
 			else if (option.equals("--dump"))
 				dumpSymbols = true;
@@ -146,6 +150,7 @@ public class BeautifulJava {
 				VariableVisitor variableVisitor = new VariableVisitor();
 				OutputVisitor outputVisitor = new OutputVisitor();
 				outputVisitor.setLineEnding(lineEnding);
+				outputVisitor.setDefaultFormat(defaultFormat);
 				if (indent != null)
 					outputVisitor.setIndent(indent);
 
