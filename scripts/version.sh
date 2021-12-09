@@ -28,6 +28,9 @@ if [ -z "${VERSION}" ]; then
 	exit
 fi
 
+VERSION_MAJOR="$(echo "${VERSION}" | cut -f1 -d.)"
+VERSION_MINOR="$(echo "${VERSION}" | cut -f2 -d.)"
+
 if [ "${0}" = "${BASH_SOURCE}" ]; then
 	echo $VERSION
 fi
