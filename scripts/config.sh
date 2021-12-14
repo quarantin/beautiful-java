@@ -143,8 +143,14 @@ fi
 #
 ZOMBOID=$(find_path zomboid Zomboid zombie/core/Core.class)
 if ! [ -d "${ZOMBOID}" ]; then
-	config_error "${ZOMBOID}"
-	exit
+	ZOMBOID=$(find_path zomboid Zomboid java/zombie/core/Core.class)
+	if ! [ -d "${ZOMBOID}" ]; then
+		config_error "${ZOMBOID}"
+		exit
+	fi
+	SERVER="server"
+	ZOMBOIDROOT="${ZOMBOID}"
+	ZOMBOID="${ZOMBOIDROOT}/java"
 fi
 
 
@@ -171,12 +177,12 @@ if [ "${1}" != "--standalone" ]; then
 	. "${REPO}/scripts/version.sh"
 fi
 
-CLASSDIR="${REPO}/pz/${VERSION}/classes"
-DECOMPDIR="${REPO}/pz/${VERSION}/decompiled"
-JAVADOCDIR="${REPO}/pz/${VERSION}/javadoc"
-LIBDIR="${REPO}/pz/${VERSION}/libs"
-LUADIR="${REPO}/pz/${VERSION}/lua"
-SOURCEDIR="${REPO}/pz/${VERSION}/sources"
+CLASSDIR="${REPO}/pz${SERVER}/${VERSION}/classes"
+DECOMPDIR="${REPO}/pz${SERVER}/${VERSION}/decompiled"
+JAVADOCDIR="${REPO}/pz${SERVER}/${VERSION}/javadoc"
+LIBDIR="${REPO}/pz${SERVER}/${VERSION}/libs"
+LUADIR="${REPO}/pz${SERVER}/${VERSION}/lua"
+SOURCEDIR="${REPO}/pz${SERVER}/${VERSION}/sources"
 
 mkdir -p "${CLASSDIR}"   "${DECOMPDIR}"   "${JAVADOCDIR}"   "${LIBDIR}"   "${LUADIR}"   "${SOURCEDIR}"
 if [ "${1}" = "--clean" ]; then
