@@ -6,7 +6,11 @@ if [ "${0}" = "${BASH_SOURCE}" ]; then
 fi
 
 # Copy Lua files
-cp -r "${ZOMBOID}/media/lua/"* "${LUADIR}"
+if [ -z "${ZOMBOIDROOT}" ]; then
+	cp -r "${ZOMBOID}/media/lua/"* "${LUADIR}"
+else
+	cp -r "${ZOMBOIDROOT}/media/lua/"* "${LUADIR}"
+fi
 
 # Copy class files
 PACKAGES=(astar
