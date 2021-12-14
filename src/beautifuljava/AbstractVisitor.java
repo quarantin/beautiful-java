@@ -145,6 +145,10 @@ public abstract class AbstractVisitor extends TreeScanner<String, String> {
 	}
 
 	public String peekClass() {
+
+		if (classStack.empty())
+			return null;
+
 		return classStack.peek();
 	}
 
