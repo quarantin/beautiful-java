@@ -87,14 +87,13 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (simpleName.equals(""))
 			return super.visitClass(classTree, indent + getIndent());
 
-		boolean topLevel = (peekClass() == null);
-		pushClass(simpleName);
-
 		if (classTree.getKind().equals(Tree.Kind.ENUM)) {
 			print(enumVisitor(classTree, indent));
-			popClass();
 			return super.visitClass(classTree, indent + getIndent());
 		}
+
+		boolean topLevel = (peekClass() == null);
+		pushClass(simpleName);
 
 		String modifiers = modifiersVisitor(classTree.getModifiers(), indent);
 		String classKeyword = getClassKeyword(classTree);
@@ -152,7 +151,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		String implementsClause = classTree.getImplementsClause().toString();
 		List<? extends Tree> members = classTree.getMembers();
-		String modifiers = classTree.getModifiers().toString();
+		String modifiers = modifiersVisitor(classTree.getModifiers(), indent);
 		String simpleName = classTree.getSimpleName().toString();
 
 		if (simpleName.equals(""))
@@ -164,7 +163,10 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (!obj2str(classTree.getTypeParameters()).equals(""))
 			throw new RuntimeException("Found enum with type parameters!");
 
-		String output = getLineEnding() + indent + modifiers + "enum " + simpleName;
+		boolean topLevel = (peekClass() == null);
+		pushClass(simpleName);
+
+		String output = (topLevel ? getLineEnding() + getLineEnding() : "") + modifiers + "enum " + simpleName;
 
 		if (!implementsClause.equals("")) {
 			output += " implements " + implementsClause;
@@ -188,12 +190,12 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 				break;
 
 			case VARIABLE:
-				variables.add(indent + obj2str(((VariableTree)memberTree).getName()));
+				variables.add(indent + getIndent() + obj2str(((VariableTree)memberTree).getName()));
 				break;
 			}
 		}
 
-		output += indent + String.join("," + getLineEnding(), variables) + ";";
+		output += getLineEnding() + String.join("," + getLineEnding(), variables) + ";" + getLineEnding();
 
 		if (blocks.size() > 0) {
 
@@ -211,8 +213,9 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 				output += method + getLineEnding();
 		}
 
-		output += "}" + getLineEnding();
+		output += indent + "}" + getLineEnding();
 
+		popClass();
 		return output;
 	}
 
