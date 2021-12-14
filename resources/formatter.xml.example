@@ -5,6 +5,7 @@
 		<option name="KEEP_BLANK_LINES_BETWEEN_PACKAGE_DECLARATION_AND_HEADER" value="0" />
 		<option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
 		<option name="BLANK_LINES_AFTER_PACKAGE" value="0" />
+		<option name="BLANK_LINES_BEFORE_IMPORTS" value="0" />
 		<indentOptions>
 			<option name="USE_TAB_CHARACTER" value="true" />
 		</indentOptions>
