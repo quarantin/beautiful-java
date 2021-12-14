@@ -4,7 +4,7 @@
 		<option name="KEEP_BLANK_LINES_IN_CODE" value="0" />
 		<option name="KEEP_BLANK_LINES_BETWEEN_PACKAGE_DECLARATION_AND_HEADER" value="0" />
 		<option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
-		<option name="BLANK_LINES_AFTER_PACKAGE" value="0" />
+		<option name="BLANK_LINES_AFTER_PACKAGE" value="1" />
 		<option name="BLANK_LINES_BEFORE_IMPORTS" value="0" />
 		<option name="SPACE_AFTER_TYPE_CAST" value="false" />
 		<indentOptions>
