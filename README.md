@@ -39,10 +39,16 @@ Remember the location where you install IntelliJ. This is the path you'll have t
 ## Installing BeautifulJava
 Once you've got Zomboid, IntelliJ, and the prerequisites for your operating system installed, you can proceed to installing BeautifulJava.
 
-Start a Bash interpreter (or Git Bash) and run the following commands:
+Start a Bash interpreter (or Git Bash). If you want to checkout the code using git, run the following commands:
 
 	cd "${HOME}"
 	git clone https://github.com/quarantin/beautiful-java
+
+If you prefer you can download BeautifulJava as a Zip archive:
+
+	cd "${HOME}"
+	wget https://github.com/quarantin/beautiful-java/releases/download/0.0.1/BeautifulJava.zip
+	unzip BeautifulJava.zip
 
 ## Configuring BeautifulJava
 Type the following commands:
@@ -71,11 +77,17 @@ Once the script has finished running, the Java source files should be available 
 
 	${HOME}/beautiful-java/pz/
 
+or if you decompiled the server part of Zomboid:
+
+	${HOME}/beautiful-java/pzserver/
+
 ## Updating BeautifulJava
-Updating BeautifulJava is done as follow:
+If you installed BeautifulJava using git, you can update the code as follow:
 
 	cd "${HOME}/beautiful-java/"
 	./bin/update
+
+Otherwise you can uninstall BeautifulJava and start over the install process.
 
 ## Uninstalling BeautifulJava
 To uninstall BeautifulJava, simply delete beautiful-java folder:
