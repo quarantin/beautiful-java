@@ -1,3 +1,7 @@
+NAME      := beautiful-java
+BUNDLE    := dist
+BUNDLEDIR := $(BUNDLE)/$(NAME)
+
 all: clean build
 
 build:
@@ -11,6 +15,11 @@ dump: clean build
 
 missing: clean build
 	java -cp ./classes:lib/* beautifuljava.BeautifulJava --dump-missing ./zombie
+
+bundle:
+	rm -rf $(BUNDLE) && mkdir -p $(BUNDLEDIR) && \
+	cp -r BeautifulJava classes lib LICENSE README.md resources scripts $(BUNDLEDIR) && \
+	cd $(BUNDLE) && zip -r BeautifulJava.zip $(NAME)
 
 clean:
 	rm -f classes/beautifuljava/*.class
