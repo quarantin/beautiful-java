@@ -24,7 +24,7 @@ import com.sun.source.tree.VariableTree;
 public class OutputVisitor extends BaseJavaSourceVisitor {
 
 	private boolean needNewline;
-	private boolean firstImport = true;
+	private boolean firstImport;
 
 	private void printNewlineIfNeeded() {
 		if (needNewline) {
@@ -58,6 +58,8 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		for (AnnotationTree annotationTree : packageTree.getAnnotations())
 			print(annotationTree.toString() + getLineEnding());
+
+		firstImport = true;
 
 		print("package " + packageName + ";" + getLineEnding());
 		return super.visitPackage(packageTree, indent);
