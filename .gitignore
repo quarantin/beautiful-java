@@ -2,6 +2,8 @@
 /*.fixed
 /*.java
 /config.txt
+/dist
 /javadoc
 /formatter.xml
 /pz
+/pzserver
