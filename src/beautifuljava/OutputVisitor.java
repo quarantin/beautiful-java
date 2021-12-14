@@ -24,6 +24,7 @@ import com.sun.source.tree.VariableTree;
 public class OutputVisitor extends BaseJavaSourceVisitor {
 
 	private boolean needNewline;
+	private boolean firstImport = true;
 
 	private void printNewlineIfNeeded() {
 		if (needNewline) {
@@ -58,12 +59,18 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		for (AnnotationTree annotationTree : packageTree.getAnnotations())
 			print(annotationTree.toString() + getLineEnding());
 
-		print("package " + packageName + ";" + getLineEnding() + getLineEnding());
+		print("package " + packageName + ";" + getLineEnding());
 		return super.visitPackage(packageTree, indent);
 	}
 
 	@Override
 	public String visitImport(ImportTree importTree, String indent) {
+
+		if (firstImport) {
+			firstImport = false;
+			print(getLineEnding());
+		}
+
 		print("import " + importTree.getQualifiedIdentifier() + ";" + getLineEnding());
 		return super.visitImport(importTree, indent);
 	}
@@ -80,6 +87,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (simpleName.equals(""))
 			return super.visitClass(classTree, indent + getIndent());
 
+		boolean topLevel = (peekClass() == null);
 		pushClass(simpleName);
 
 		if (classTree.getKind().equals(Tree.Kind.ENUM)) {
@@ -88,13 +96,11 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			return super.visitClass(classTree, indent + getIndent());
 		}
 
-		String modifiers = obj2str(classTree.getModifiers()).replace("interface", "").replace("  ", " ");
+		String modifiers = modifiersVisitor(classTree.getModifiers(), indent);
 		String classKeyword = getClassKeyword(classTree);
 		String typeParameters = obj2str(classTree.getTypeParameters());
 
-		printNewlineIfNeeded();
-
-		String output = getLineEnding() + indent + modifiers + classKeyword + simpleName + typeParameters;
+		String output = (topLevel ? getLineEnding() : "") + getLineEnding() + modifiers + classKeyword + simpleName + typeParameters;
 
 		String extendsClause = obj2str(classTree.getExtendsClause());
 		if (!extendsClause.equals("")) {
@@ -226,6 +232,8 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			paramList.add(type + " " + oldName);
 		}
 
+		printNewlineIfNeeded();
+
 		String output = "";
 		if (methodName.equals("<init>")) {
 			methodName = peekClass();
@@ -345,7 +353,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (methodBody)
 			output += indent.substring(getIndent().length()) + "}";
 		else
-			output += indent + "}";
+			output += indent + "}" + getLineEnding();
 
 		return output;
 	}
