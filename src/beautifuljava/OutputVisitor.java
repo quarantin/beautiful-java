@@ -5,6 +5,9 @@ import java.io.PrintStream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.lang.model.element.Modifier;
 
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.AnnotationTree;
@@ -13,6 +16,7 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.VariableTree;
@@ -74,14 +78,14 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 		String simpleName = obj2str(classTree.getSimpleName());
 		if (simpleName.equals(""))
-			return super.visitClass(classTree, indent);
+			return super.visitClass(classTree, indent + getIndent());
 
 		pushClass(simpleName);
 
 		if (classTree.getKind().equals(Tree.Kind.ENUM)) {
 			print(enumVisitor(classTree, indent));
 			popClass();
-			return super.visitClass(classTree, indent);
+			return super.visitClass(classTree, indent + getIndent());
 		}
 
 		String modifiers = obj2str(classTree.getModifiers()).replace("interface", "").replace("  ", " ");
@@ -112,7 +116,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 			case BLOCK:
 				printNewlineIfNeeded();
-				print(indent + getIndent() + blockVisitor((BlockTree)memberTree, indent + getIndent()));
+				print(blockVisitor((BlockTree)memberTree, indent + getIndent(), false));
 				needNewline = true;
 				break;
 
@@ -129,7 +133,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			}
 		}
 
-		String result = super.visitClass(classTree, indent);
+		String result = super.visitClass(classTree, indent + getIndent());
 
 		print(indent + "}" + getLineEnding());
 
@@ -170,7 +174,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			switch (memberTree.getKind()) {
 
 			case BLOCK:
-				blocks.add(blockVisitor((BlockTree)memberTree, indent + getIndent()));
+				blocks.add(blockVisitor((BlockTree)memberTree, indent + getIndent(), false));
 				break;
 
 			case METHOD:
@@ -208,9 +212,9 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 
 	public String methodVisitor(MethodTree methodTree, String indent) {
 
-		String modifier   = obj2str(methodTree.getModifiers());
-		String returnType = obj2str(methodTree.getReturnType());
 		String methodName = obj2str(methodTree.getName());
+		String returnType = obj2str(methodTree.getReturnType());
+		String modifiers = modifiersVisitor(methodTree.getModifiers(), indent);
 
 		List<String> typeList = new ArrayList<>();
 		List<String> paramList = new ArrayList<>();
@@ -225,10 +229,10 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		String output = "";
 		if (methodName.equals("<init>")) {
 			methodName = peekClass();
-			output += indent + modifier + methodName + "(";
+			output += modifiers + methodName + "(";
 		}
 		else {
-			output += indent + modifier + returnType + " " + methodName + "(";
+			output += modifiers + returnType + " " + methodName + "(";
 		}
 
 		String methodKey = methodName + "(" + String.join(",", typeList) + ")";
@@ -255,11 +259,31 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		if (blockTree == null)
 			output += ";";
 		else
-			output += " " + blockVisitor(blockTree, indent + getIndent());
+			output += blockVisitor(blockTree, indent + getIndent(), true);
 
 		output = replace(output);
 
 		popMethod();
+		return output;
+	}
+
+	public String modifiersVisitor(ModifiersTree modifiersTree, String indent) {
+
+		Set<Modifier> flags = modifiersTree.getFlags();
+		List<? extends AnnotationTree> annotations = modifiersTree.getAnnotations();
+
+		String output = "";
+
+		if (annotations != null)
+			for (AnnotationTree annotationTree : annotations)
+				output += indent + annotationTree.toString().replace("()", "") + getLineEnding();
+
+		output += indent;
+
+		if (flags != null)
+			for (Modifier flag : flags)
+				output += flag.toString() + " ";
+
 		return output;
 	}
 
@@ -280,12 +304,12 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		return output;
 	}
 
-	public String blockVisitor(BlockTree blockTree, String indent) {
+	public String blockVisitor(BlockTree blockTree, String indent, boolean methodBody) {
 
-		String staticStr = blockTree.isStatic() ? "static " : "";
+		String staticStr = blockTree.isStatic() ? indent + "static " : "";
 		List<String> statementsList = new ArrayList<>();
 
-		String output = staticStr + "{" + getLineEnding();
+		String output = staticStr + " {" + getLineEnding();
 
 		for (StatementTree statementTree : blockTree.getStatements()) {
 
@@ -311,25 +335,28 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 				break;
 
 			default:
-				output += blockVisitorHelper(statementTree, indent);
+				output += blockVisitorHelper(statementTree, indent + (methodBody ? "" : getIndent()));
 				break;
 			}
 		}
 
 		needNewline = false;
 
-		output += indent.substring(getIndent().length()) + "}";
+		if (methodBody)
+			output += indent.substring(getIndent().length()) + "}";
+		else
+			output += indent + "}";
 
 		return output;
 	}
 
 	public String variableVisitor(VariableTree variableTree, String indent) {
 		String initializer = obj2str(variableTree.getInitializer());
-		String modifiers = obj2str(variableTree.getModifiers());
+		String modifiers = modifiersVisitor(variableTree.getModifiers(), indent);
 		String name = obj2str(variableTree.getName());
 		String type = obj2str(variableTree.getType());
 
-		String output = indent + modifiers + type + " " + name;
+		String output = modifiers + type + " " + name;
 		if (!initializer.equals("")) {
 			output += " = " + initializer;
 		}
