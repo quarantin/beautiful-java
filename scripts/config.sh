@@ -143,7 +143,7 @@ fi
 #
 ZOMBOID=$(find_path zomboid Zomboid zombie/core/Core.class)
 if ! [ -d "${ZOMBOID}" ]; then
-	config_error "${INTELLIJ}"
+	config_error "${ZOMBOID}"
 	exit
 fi
 
