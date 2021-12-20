@@ -43,7 +43,7 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 			return "interface ";
 
 		case ANNOTATION_TYPE:
-			return "interface ";
+			return "@interface ";
 
 		default:
 			throw new RuntimeException("Unsupported kind of object: " + classTree.getKind());
