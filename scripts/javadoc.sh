@@ -30,6 +30,6 @@ fi
 IFS="${OLDIFS}"
 
 PACKAGES=$(grep --binary-files=text -R ^package "${SOURCEDIR}" | cut -f 2 -d: | sed -e 's/^package //' -e 's/;$//' | sort -u | tr '\n' ' ')
-"${JAVADOC}" -source 8 -encoding utf8 -Xdoclint:none -cp "${LIBDIR}${SEP}${LIBDIR}/*" -d "${JAVADOCDIR}" --source-path "${SOURCEDIR}/" ${PACKAGES}
+"${JAVADOC}" -source 8 -encoding utf8 -Xdoclint:none -cp "${ZOMBOID}${SEP}${LIBDIR}${SEP}${LIBDIR}/*" -d "${JAVADOCDIR}" --source-path "${SOURCEDIR}/" ${PACKAGES}
 
 IFS="${NEWIFS}"
