@@ -21,7 +21,6 @@ PACKAGES=(astar
 	org
 	rcon
 	se
-	sun
 	zombie
 )
 for PACKAGE in "${PACKAGES[@]}"; do
