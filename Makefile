@@ -1,6 +1,8 @@
 NAME      := beautiful-java
 BUNDLE    := dist
 BUNDLEDIR := $(BUNDLE)/$(NAME)
+VERSION   := $(shell git describe --tags --always)
+ZIPFILE   := BeautifulJava-$(VERSION).zip
 
 all: clean build
 
@@ -19,7 +21,7 @@ missing: clean build
 bundle:
 	rm -rf $(BUNDLE) && mkdir -p $(BUNDLEDIR) && \
 	cp -r BeautifulJava classes lib LICENSE README.md resources scripts $(BUNDLEDIR) && \
-	cd $(BUNDLE) && zip -r BeautifulJava.zip $(NAME)
+	cd $(BUNDLE) && zip -r $(ZIPFILE) $(NAME)
 
 clean:
 	rm -f classes/beautifuljava/*.class
