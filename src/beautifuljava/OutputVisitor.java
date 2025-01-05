@@ -39,6 +39,9 @@ public class OutputVisitor extends BaseJavaSourceVisitor {
 		case CLASS:
 			return "class ";
 
+		case RECORD:
+			return "record ";
+
 		case INTERFACE:
 			return "interface ";
 
