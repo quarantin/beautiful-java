@@ -47,7 +47,7 @@ Start a Bash interpreter (or Git Bash). If you want to checkout the code using g
 If you prefer you can download BeautifulJava as a Zip archive:
 
 	cd "${HOME}"
-	wget https://github.com/quarantin/beautiful-java/releases/download/0.0.2/BeautifulJava.zip
+	wget https://github.com/quarantin/beautiful-java/releases/download/0.0.2/BeautifulJava-0.0.2.zip
 	unzip BeautifulJava.zip
 
 ## Configuring BeautifulJava
