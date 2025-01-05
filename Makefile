@@ -5,7 +5,7 @@ BUNDLEDIR := $(BUNDLE)/$(NAME)
 all: clean build
 
 build:
-	javac --release 11 -cp ./src:lib/* -d ./classes -Xlint:unchecked src/beautifuljava/BeautifulJava.java
+	javac --release 17 -cp ./src:lib/* -d ./classes -Xlint:unchecked src/beautifuljava/BeautifulJava.java
 
 run: clean build
 	java -cp ./classes:lib/* beautifuljava.BeautifulJava ./zombie
